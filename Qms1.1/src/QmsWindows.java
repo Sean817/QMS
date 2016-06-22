@@ -162,7 +162,9 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 //				System.out.println("step = "+playTime+",lastvalue = "+a);
 //			spl.add(playTime, a);
 //			stander_spl.add(playTime, 80);
-			if(playTime%5==0){
+			if(playTime%5==0)//测试均值显示
+			
+			{
 				Double sumSql = (double) 0;
 				Double sumLum = (double) 0;
 				Double sumColorX = (double) 0;
@@ -243,7 +245,7 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 				}
 				}
 				AllVarible.mIndex +=1;
-				if(AllVarible.mIndex>7)
+				if(AllVarible.mIndex>8)
 				{
 					AllVarible.mIndex =0;
 				}
@@ -412,7 +414,8 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 
 	}
 	
-	public Panel  labelPane() {
+	public Panel  labelPane()//测试页面标签
+	{
 		Panel labelPane = new Panel();
 		labelPane.setLayout(null);
 		labelPane.setPreferredSize(new Dimension(100,40));
@@ -503,7 +506,8 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 		
 	}
 	
-	public Button setBtn(){
+	public Button setBtn()//配节界面按钮事件
+	{
 		
         setBtn.addActionListener(new ActionListener() {
         	   @Override
@@ -551,7 +555,12 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
                    	
                   	
                 }
-               	ExportTestReport.exprotChartPicture();
+               	try {
+					ExportTestReport.exprotChartPicture();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
         	    JButton saveButton = new JButton("保存");
         	    JButton deleButton = new JButton("取消");
         	    //关闭配置界面
@@ -791,9 +800,9 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
     public	JPanel drawChart4(XYSeries measureX,XYSeries standerX,XYSeries measureY,XYSeries standerY,String Yname,int Ymin,int Ymax)
 	{
 		XYSeriesCollection dataset = new XYSeriesCollection(measureX);
-        dataset.addSeries(standerX);
+        dataset.addSeries(measureX);
         dataset.addSeries(standerY);
-        dataset.addSeries(standerY);
+        dataset.addSeries(measureY);
         dataset.addSeries(standerX);
         JFreeChart jfreechart = ChartFactory.createXYLineChart("",
 				"", Yname, dataset, PlotOrientation.VERTICAL, false, false, true);
