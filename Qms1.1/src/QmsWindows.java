@@ -63,7 +63,8 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 	private static final long serialVersionUID = 1L;
 	// 时序图数据集
 	public static  Label[] numbers = new Label[8];
-	public Label[] msIndex = new Label[8];
+	public static Label[] msIndex = new Label[8];
+	static Label[] msIndex1 = new Label[8];
 	public static Label[] rowIndex= new Label[8];
 	public static Label[] ynIndex = new Label[8];
 	public static Label[] ynIndex1 = new Label[9];
@@ -88,6 +89,9 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 	public Double tempW = (double) 0;
 	public Double colorD = (double) 0;
 	public Double colorW = (double) 0;
+	
+
+	
 	XYSeries spl = new XYSeries("");
 	XYSeries stander_spl = new XYSeries("");
 	XYSeries lum = new XYSeries("");
@@ -188,16 +192,21 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 //					double recordSql = Double.parseDouble(sumRecord[3]);
 					sumSql = (Double) (sumSql+Double.parseDouble(sumRecord[3]));
 					sumLum = (Double) (sumLum+Double.parseDouble(sumRecord[4]));
-//					System.out.println("！！！！~~~~~"+Double.parseDouble(sumRecord[4]));
 
 					sumColorX = (Double) (sumColorX+Double.parseDouble(sumRecord[5]));
 					sumColorY = (Double) (sumColorY+Double.parseDouble(sumRecord[6]));
-					sumTempreature = (Double) (sumTempreature+Double.parseDouble(sumRecord[7]));
+					
 					sumSqlS = (Double) (sumSqlS+Double.parseDouble(sumRecordS[1]));
 					sumLumS = (Double) (sumLumS+Double.parseDouble(sumRecordS[2]));
+					
 					sumColorXS = (Double) (sumColorXS+Double.parseDouble(sumRecordS[3]));
 					sumColorYS = (Double) (sumColorYS+Double.parseDouble(sumRecordS[4]));
+					
+					sumTempreature = (Double) (sumTempreature+Double.parseDouble(sumRecord[7]));
 					sumTempreatureS = (Double) (sumTempreatureS+Double.parseDouble(sumRecordS[5]));
+
+
+					
 //					System.out.println("~~~~~"+sumLumS);
 					System.out.println(sumLum-sumLumS);
 					if(i==4){
@@ -249,6 +258,22 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 				{
 					AllVarible.mIndex =0;
 				}
+				//平均值
+				AllVarible.AveSql = String.valueOf(String.format("%.2f",sumSql/5));
+				AllVarible.AveLum = String.valueOf(String.format("%.2f",sumLum/5));
+				
+				AllVarible.AveSqlS = String.valueOf(String.format("%.2f",sumSqlS/5));
+				AllVarible.AveLumS = String.valueOf(String.format("%.2f",sumLumS/5));
+
+				AllVarible.AveColorX = String.valueOf(String.format("%.2f",sumColorX/5));
+				AllVarible.AveColorY = String.valueOf(String.format("%.2f",sumColorY/5));
+				
+				AllVarible.AveColorXS = String.valueOf(String.format("%.2f",sumColorXS/5));
+				AllVarible.AveColorYS = String.valueOf(String.format("%.2f",sumColorYS/5));
+				
+				AllVarible.AveTempreature = String.valueOf(String.format("%.2f",sumTempreature/5));
+				AllVarible.AveTempreatureS = String.valueOf(String.format("%.2f",sumTempreatureS/5));
+				
 				QmsWindows.numbers[0].setText("            "+String.valueOf(String.format("%.2f",sumLum/5))
 				+"                       "+String.valueOf(String.format("%.2f",sumLumS/5)));
 				
@@ -256,7 +281,7 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 				QmsWindows.numbers[AllVarible.mIndex].setText("        "
 							  +String.valueOf(String.format("%.2f",sumColorX/5)) 
 						+"   "+String.valueOf( String.format("%.2f",sumColorY/5))+"                " 
-		  +String.valueOf(String.format("%.2f",sumColorXS/5))
+							  +String.valueOf(String.format("%.2f",sumColorXS/5))
 						+"   "+String.valueOf( String.format("%.2f",sumColorYS/5)));
 				QmsWindows.rowIndex[0].setText("            "+String.valueOf(String.format("%.2f",sumTempreature/5))
 				+"                       "+String.valueOf(String.format("%.2f",sumTempreatureS/5)));
@@ -1007,23 +1032,22 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 //        	ynIndex1[i].setBackground(Color.WHITE);
         }
         JPanel ms1 = new JPanel();
-    	Label[] ms1Index = new Label[8];
         ms1.setLayout(gridLayout2);
         for (int i = 0; i < 8; i++) 
         {	
         	if(i==0)
         	{
-            	ms1Index[i] = new Label("温度",Label.CENTER);
+            	msIndex1[i] = new Label("温度",Label.CENTER);
 
         	}
         	else {
-            	ms1Index[i] = new Label("模式"+i,Label.CENTER);
+            	msIndex1[i] = new Label("模式"+i,Label.CENTER);
 
 
 			}
 
 
-            ms1.add(ms1Index[i]);
+            ms1.add(msIndex1[i]);
         }
         JPanel row = new JPanel();
 

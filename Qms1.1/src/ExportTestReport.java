@@ -252,26 +252,88 @@ public class ExportTestReport {
     			   Image jpg = Image.getInstance("/Users/Sean/Desktop/javawork/Qms1.1/chartPicture/"+i+"t2016613170407.png");
     			   jpg.setAlignment(Image.ALIGN_CENTER);
     			   doc.add(jpg);
-
     		   }
     		   doc.newPage();
+    		   String footer1 = "———————————————————————————————————————————";
+    		   String footer2 = "                                        "
+    		   		+ "正在检测项目" 
+    		   		+ "                                                "
+    		   		+ "值"  
+    		   		+ "                              "
+    		   		+ "基准"
+    		   		+ "";
+    		   String footer3 = "———————————————————————————————————————————";
+//    		   String footer3 =QmsWindows.rowIndex[AllVarible.mIndex].getText();
+;
+
+    		   Font FontChinese1 = new Font(bfChinese, 12, Font.NORMAL);
     		   
-    		   Font chinese = new Font(bfChinese, 10, Font.NORMAL); 
-    			HeaderFooter footer=new HeaderFooter(new Phrase("-",chinese),new Phrase("-",chinese));
+    		   Paragraph paragraph1 = new Paragraph(footer1, FontChinese);
+    		   Paragraph paragraph2 = new Paragraph(footer2, FontChinese1);
+    		   Paragraph paragraph3 = new Paragraph(footer3, FontChinese);
+
+    		   doc.add(paragraph1);
+    		   doc.add(paragraph2);
+    		   doc.add(paragraph3);
+
+
+    		   Font chinese = new Font(bfChinese, 12, Font.NORMAL); 
+    		   HeaderFooter footer=new HeaderFooter(new Phrase("-",chinese),new Phrase("-",chinese));
     			/**
     			 * 0是靠左
     			 * 1是居中
     			 * 2是居右
     			 */
-    			footer.setAlignment(2);
-    			footer.setBorderColor(Color.red);
-    			footer.setBorder(Rectangle.BOX);
-    		   doc.add(footer);
-    		   doc.close();
+//    			footer.setAlignment(2);
+//    			footer.setBorderColor(Color.red);
+//    			footer.setBorder(Rectangle.BOX);
+//    		    doc.add(footer);
+//    		    doc.close();
+    		   //对其控制
+    		   String space ="                                 ";
+    		  //亮度行
+    		   String footerLum = "                                             "+QmsWindows.ynIndex[0].getText()+
+    				   			  "           "+QmsWindows.msIndex[0].getText()+
+    				   			  "                                 "+QmsWindows.numbers[0].getText();
+    		   Paragraph paragraphLum = new Paragraph(footerLum, FontChinese);
+			   doc.add(paragraphLum);
+			  //色彩7行
+    		   Paragraph[] paragraphColor = new Paragraph[8];
+    		   String[] footerColor = new String[8];
 
+    		   for(int i=1;i<8;i++){
+    			   footerColor[i] = "                                             "+QmsWindows.ynIndex[i].getText()
+    					   		  +"           "+QmsWindows.msIndex[i].getText()
+    					   		  +"                                 "+QmsWindows.numbers[i].getText();
+        		   paragraphColor[i] = new Paragraph(footerColor[i], chinese);
+    			   doc.add(paragraphColor[i]);
+    		   }
+ 
+ 			  //空行
+    		   String footerNull = "";
+    		   Paragraph paragraphNull = new Paragraph(footerNull, FontChinese);
+    		   doc.add(paragraphNull);
+    		  
+    		   //温度
+    		   String footerTemp = "                                             "+QmsWindows.ynIndex1[0].getText()
+    				   +"           "+"温度"
+    				   +"                                 "+QmsWindows.rowIndex[0].getText();
+    		   Paragraph paragraphTemp = new Paragraph(footerTemp, FontChinese);
+			   doc.add(paragraphTemp);
+    		  
+			   //声音
+			   Paragraph[] paragraphSpl = new Paragraph[8];
+    		   String[] footerSpl = new String[8];
 
-    		   // 关闭文档对象，释放资源
-    		   
+    		   for(int i=1;i<8;i++){
+    			   footerSpl[i] = "                                             "+QmsWindows.ynIndex1[i].getText()
+					   		  +"           "+QmsWindows.msIndex1[i].getText()
+					   		  +"                                 "+QmsWindows.rowIndex[i].getText();
+    					   
+    			   paragraphSpl[i] = new Paragraph(footerSpl[i], chinese);
+    			   doc.add(paragraphSpl[i]);
+    		   }
+			   // 关闭文档对象，释放资源
     		   doc.close();
     		   
     		   
@@ -290,8 +352,11 @@ public class ExportTestReport {
     		  System.out.println("OK");
 
     		 }
+    	public static  void detailPage() {
 			
 		}
+
+	}
       	
 
  

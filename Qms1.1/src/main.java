@@ -16,6 +16,17 @@ class AllVarible
 	static String historyTableName;
 	static int mIndex = 0;
 	static int sIndex = 0;
+	
+	static String AveSql ;
+	static String AveLum ;
+	static String AveColorX;
+	static String AveColorY;
+	static String AveTempreature;
+	static String AveSqlS ;
+	static String AveLumS;
+	static String AveColorXS;
+	static String AveColorYS;
+	static String AveTempreatureS;
 
 }
 
@@ -36,7 +47,5 @@ public class main {
 //		System.out.println(Integer.parseInt(AllVarible.upDataContainer[0].split(",")[0]));
 //		System.out.println(Integer.parseInt(AllVarible.upDataContainer[0].split(",")[0]));
 	}
-
-
 }
 
