@@ -22,6 +22,8 @@ import java.awt.Label;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -34,7 +36,11 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.jfree.chart.ChartFactory;
@@ -79,6 +85,8 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
     Button startBtn = new Button("测试");
     Button stopBtn = new Button("停止");
     Button setBtn = new Button("配置");
+	Panel labelPane = new Panel();
+	Panel testListPane = new Panel();//测试列表面板
 	JComboBox<String> historyList = new JComboBox<String>();
 
 	public Double sqlD = (double) 0;
@@ -128,7 +136,7 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 			} catch (IOException | InterruptedException e1) {
 				e1.printStackTrace();
 			}
-			ThreadDb threadDb=new ThreadDb();
+			ThreadDb threadDb = new ThreadDb();
 			threadDb.start();
 			System.out.println(AllVarible.curIndex);
 //			System.out.println(AllVarible.curIndex );
@@ -404,12 +412,12 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
         rightPane.setLayout(new BorderLayout());
         rightPane.add(cutPanel(400, 585));
 		
-        
 		JPanel leftPane = new JPanel();
-	
         leftPane.setLayout(new BorderLayout());
         leftPane.setPreferredSize(new Dimension(750, 600));
         cmdPanel();
+        JScrollPane scrool = new JScrollPane(new JTextArea(""));
+        leftPane.add(scrool,"East");
         leftPane.add(labelPane(),"North");
         leftPane.add(testListPane(200,300),"Center");
         leftPane.add(setPanel(30),"South");
@@ -420,28 +428,13 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 
 //        getContentPane().add(cmdPanel());
 		
-		
-	  
-	    
-
-
-
-
-
         
-
-        
-
-
-
-
 //		initComponents(chartpanel_lum);
 
 	}
 	
 	public Panel  labelPane()//测试页面标签
 	{
-		Panel labelPane = new Panel();
 		labelPane.setLayout(null);
 		labelPane.setPreferredSize(new Dimension(100,40));
 //		labelPane.setBackground(Color.red);
@@ -493,6 +486,8 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 		setList.addItem("2D_F");
 		setList.addItem("3D_F");
 		setList.setBounds(100, 20, 90, 20);
+		
+
 		labelPane.add(setList);
 		
 		historyList.setBounds(190, 20, 160, 20);
@@ -500,6 +495,19 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 
 		Label screenLabel1 = new Label("1厅",Label.CENTER);
 		screenLabel1.setBounds(350, 20, 80, 20);
+		screenLabel1.addMouseListener(new MouseAdapter()
+			{
+				public void mouseClicked(MouseEvent e) 
+				{
+					if(e.getButton() == MouseEvent.BUTTON3)
+					{
+						getPopup().show(e.getComponent(),
+		                           e.getX(), e.getY());
+					}
+				}
+			});
+
+
 		labelPane.add(screenLabel1);
 
 		Label lumLabel1 = new Label("√基准",Label.CENTER);
@@ -518,15 +526,56 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 		tempLabel1.setBounds(670, 20, 80, 20);
 		labelPane.add(tempLabel1);
 		
-		return labelPane;
 		
+		
+		return labelPane;
 	}
+		private JPopupMenu getPopup() {
+			JPopupMenu popup = null;
+			if(popup == null) {
+				popup = new JPopupMenu("");
+
+				JMenuItem item1  = new JMenuItem("设为基准");
+				item1.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+		            	AllVarible.historyTableName = historyList.getSelectedItem().toString();
+					}
+				});
+				popup.add(item1);
+
+				JMenuItem item2  = new JMenuItem("导出报告");
+				item2.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						//导出PDF报告
+						try {
+							ExportTestReport.exprotChartPicture();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+				});
+				popup.add(item2);
+
+				JMenuItem item3  = new JMenuItem("Default");
+				item3.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						testListPane.setBackground(Color.GRAY);
+					}
+				});
+				popup.add(item3);
+				
+				popup.setInvoker(historyList);
+			}
+			return popup;
+		}
 	
 	public Panel testListPane(int w, int h){
 		
-		Panel testListPane = new Panel();
 		testListPane.setPreferredSize(new Dimension(w, h));
 		testListPane.setBackground(Color.GRAY);
+		//测试右键菜单，设为基准及导出测试结果命令
+		
 		return testListPane;
 		
 	}
@@ -580,12 +629,8 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
                    	
                   	
                 }
-               	try {
-					ExportTestReport.exprotChartPicture();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+              
+				
         	    JButton saveButton = new JButton("保存");
         	    JButton deleButton = new JButton("取消");
         	    //关闭配置界面
@@ -628,7 +673,8 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 		
 	}
 	
-	public JPanel cmdPanel(){
+	public JPanel cmdPanel()
+	{
 	
 		    for(int i=0;i<AllVarible.tableList.size();i++)
 		    {
@@ -636,16 +682,16 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 		    	historyList.addItem(AllVarible.tableList.get(i));
 //				System.out.println(AllVarible.tableList.get(0));
 		    }
-	    	
-
-
+		   
 	        startBtn.addActionListener(new ActionListener()
 	        {
 	            public void actionPerformed(ActionEvent arg0) 
 	            {
 	            	AllVarible.testControl = true;
 	            	AllVarible.threadChar.start();
-	            	AllVarible.historyTableName = historyList.getSelectedItem().toString();
+	            	if (AllVarible.historyTableName == null) {
+		            	AllVarible.historyTableName = historyList.getSelectedItem().toString();
+					}
 	            	ThreadDownlodHistory downloadHistory = new ThreadDownlodHistory();
 	            	downloadHistory.start();
 	            }
@@ -666,7 +712,6 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 		    cmdPanel.add(stopBtn,"South");
 		    cmdPanel.add(setBtn(),"West");
 		return cmdPanel ;
-		
 	}
 	
 	public JPanel setPanel(int x){
