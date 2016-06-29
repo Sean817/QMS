@@ -37,7 +37,8 @@ public class main {
 //		threadDb.start();
 		
 		ThreadHistoryDb HistoryDb = new ThreadHistoryDb();
-		HistoryDb.start();
+		HistoryDb.start();//更新历史测试列表
+		
 		QmsWindows TimeSeriesDemo1 = new QmsWindows();
 		TimeSeriesDemo1.pack();
 		RefineryUtilities.centerFrameOnScreen(TimeSeriesDemo1);

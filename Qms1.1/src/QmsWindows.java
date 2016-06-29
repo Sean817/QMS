@@ -33,14 +33,13 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.jfree.chart.ChartFactory;
@@ -86,7 +85,7 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
     Button stopBtn = new Button("停止");
     Button setBtn = new Button("配置");
 	Panel labelPane = new Panel();
-	Panel testListPane = new Panel();//测试列表面板
+	JPanel testListPane = new JPanel();//测试列表面板
 	JComboBox<String> historyList = new JComboBox<String>();
 
 	public Double sqlD = (double) 0;
@@ -412,15 +411,28 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
         rightPane.setLayout(new BorderLayout());
         rightPane.add(cutPanel(400, 585));
 		
+//		JPanel leftPane = new JPanel();
+//        leftPane.setLayout(new BorderLayout());
+//        leftPane.setPreferredSize(new Dimension(750, 600));
+//        cmdPanel();
+//        JScrollPane scrool = new JScrollPane(new JTextArea(""));
+//        leftPane.add(scrool,"East");
+//        leftPane.add(labelPane(),"North");
+//        leftPane.add(testListPane(200,300),"Center");
+//        leftPane.add(setPanel(30),"South");
+        
 		JPanel leftPane = new JPanel();
-        leftPane.setLayout(new BorderLayout());
-        leftPane.setPreferredSize(new Dimension(750, 600));
-        cmdPanel();
-        JScrollPane scrool = new JScrollPane(new JTextArea(""));
-        leftPane.add(scrool,"East");
-        leftPane.add(labelPane(),"North");
-        leftPane.add(testListPane(200,300),"Center");
-        leftPane.add(setPanel(30),"South");
+		leftPane.setPreferredSize(new Dimension(750, 600));
+	    leftPane.add(labelPane(750,20));
+		cmdPanel();
+	    leftPane.add(testListPane(750,30));
+
+//	    leftPane.add(testListPane(750,30));
+//	    leftPane.add(testListPane(750,30));
+
+	    
+
+//	    leftPane.add(setPanel(750,30));
 
 
         getContentPane().add(leftPane,"North");    
@@ -433,10 +445,10 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 
 	}
 	
-	public Panel  labelPane()//测试页面标签
+	public Panel  labelPane(int w,int h)//测试页面标签
 	{
 		labelPane.setLayout(null);
-		labelPane.setPreferredSize(new Dimension(100,40));
+		labelPane.setPreferredSize(new Dimension(w,h));
 //		labelPane.setBackground(Color.red);
 		Label nuLabel = new Label("");
 		nuLabel.setBackground(Color.red);
@@ -479,58 +491,11 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 		tempLabel.setBounds(670, 0, 80, 20);
 		labelPane.add(tempLabel);
 		
-		startBtn.setBounds(0, 20, 100, 20);
-		labelPane.add(startBtn);
-		
-		JComboBox<String> setList = new JComboBox<String>();
-		setList.addItem("2D_F");
-		setList.addItem("3D_F");
-		setList.setBounds(100, 20, 90, 20);
-		
-
-		labelPane.add(setList);
-		
-		historyList.setBounds(190, 20, 160, 20);
-		labelPane.add(historyList);
-
-		Label screenLabel1 = new Label("1厅",Label.CENTER);
-		screenLabel1.setBounds(350, 20, 80, 20);
-		screenLabel1.addMouseListener(new MouseAdapter()
-			{
-				public void mouseClicked(MouseEvent e) 
-				{
-					if(e.getButton() == MouseEvent.BUTTON3)
-					{
-						getPopup().show(e.getComponent(),
-		                           e.getX(), e.getY());
-					}
-				}
-			});
-
-
-		labelPane.add(screenLabel1);
-
-		Label lumLabel1 = new Label("√基准",Label.CENTER);
-		lumLabel1.setBounds(430, 20, 80, 20);
-		labelPane.add(lumLabel1);
-		
-		Label colorLabel1 = new Label("√基准",Label.CENTER);
-		colorLabel1.setBounds(510, 20, 80, 20);
-		labelPane.add(colorLabel1);
-		
-		Label splLabel1 = new Label("√基准",Label.CENTER);
-		splLabel1.setBounds(590, 20, 80, 20);
-		labelPane.add(splLabel1);
-		
-		Label tempLabel1 = new Label("√基准",Label.CENTER);
-		tempLabel1.setBounds(670, 20, 80, 20);
-		labelPane.add(tempLabel1);
-		
-		
-		
 		return labelPane;
 	}
-		private JPopupMenu getPopup() {
+	
+	private JPopupMenu getPopup() //右键菜单列表
+{
 			JPopupMenu popup = null;
 			if(popup == null) {
 				popup = new JPopupMenu("");
@@ -570,14 +535,148 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 			return popup;
 		}
 	
-	public Panel testListPane(int w, int h){
+	public JPanel testListPane(int w, int h)//测试状态列
+{
+//		JPanel testRecordPane = new JPanel();
+//		testRecordPane.setLayout(null);
+//		startBtn.setBounds(0, 20, 100, 20);
+//		testRecordPane.add(startBtn);
+//		
+//		JComboBox<String> setList = new JComboBox<String>();
+//		setList.addItem("2D_F");
+//		setList.addItem("3D_F");
+//		setList.setBounds(100, 20, 90, 20);
+//		
+//
+//		testRecordPane.add(setList);
+//		
+//		historyList.setBounds(190, 20, 160, 20);
+//		testRecordPane.add(historyList);
+//
+//		Label screenLabel1 = new Label("1厅",Label.CENTER);
+//		screenLabel1.setBounds(350, 20, 80, 20);
+//		screenLabel1.addMouseListener(new MouseAdapter()
+//			{
+//				public void mouseClicked(MouseEvent e) 
+//				{
+//					if(e.getButton() == MouseEvent.BUTTON3)
+//					{
+//						getPopup().show(e.getComponent(),
+//		                           e.getX(), e.getY());
+//					}
+//				}
+//			});
+//
+//
+//		testRecordPane.add(screenLabel1);
+//
+//		Label lumLabel1 = new Label("√基准",Label.CENTER);
+//		lumLabel1.setBounds(430, 20, 80, 20);
+//		testRecordPane.add(lumLabel1);
+//		
+//		Label colorLabel1 = new Label("√基准",Label.CENTER);
+//		colorLabel1.setBounds(510, 20, 80, 20);
+//		testRecordPane.add(colorLabel1);
+//		
+//		Label splLabel1 = new Label("√基准",Label.CENTER);
+//		splLabel1.setBounds(590, 20, 80, 20);
+//		testRecordPane.add(splLabel1);
+//		
+//		Label tempLabel1 = new Label("√基准",Label.CENTER);
+//		tempLabel1.setBounds(670, 20, 80, 20);
+//		testRecordPane.add(tempLabel1);
+//		
+//		testRecordPane.setPreferredSize(new Dimension(w, h));
+//		testRecordPane.setBackground(Color.GRAY);
+//		testRecordPane.add(labelPane);
+//
+//		//测试右键菜单，设为基准及导出测试结果命令
+//		
+//		return testRecordPane;
+
+		JPanel testRecordPane = new JPanel();
 		
-		testListPane.setPreferredSize(new Dimension(w, h));
-		testListPane.setBackground(Color.GRAY);
+	    Button startBtn = new Button("测试");
+		startBtn.setPreferredSize(new Dimension(100, 20));
+		testRecordPane.add(startBtn);
+		startBtn.addActionListener(new ActionListener()
+	        {
+	            public void actionPerformed(ActionEvent arg0) 
+	            {
+	            	AllVarible.testControl = true;
+	            	AllVarible.threadChar.start();
+	            	if (AllVarible.historyTableName == null) {
+		            	AllVarible.historyTableName = historyList.getSelectedItem().toString();
+					}
+	            	ThreadDownlodHistory downloadHistory = new ThreadDownlodHistory();
+	            	downloadHistory.start();
+	            }
+	        });
+		
+		JComboBox<String> setList = new JComboBox<String>();
+		setList.addItem("2D_F");
+		setList.addItem("3D_F");
+//		setList.setBounds(100, 20, 90, 20);
+		setList.setPreferredSize(new Dimension(90, 20));
+		testRecordPane.add(setList);
+		
+		JComboBox<String> historyList = new JComboBox<String>();
+		for(int i=0;i<AllVarible.tableList.size();i++)
+	    	{
+				historyList.addItem(AllVarible.tableList.get(i));
+	    	}
+		historyList.setPreferredSize(new Dimension(160, 20));
+		testRecordPane.add(historyList);
+	
+		Label screenLabel1 = new Label("1厅",Label.CENTER);
+//		screenLabel1.setBounds(350, 20, 80, 20);
+		screenLabel1.setPreferredSize(new Dimension(40, 20));
+
+		screenLabel1.addMouseListener(new MouseAdapter()
+			{
+				public void mouseClicked(MouseEvent e) 
+				{
+					if(e.getButton() == MouseEvent.BUTTON3)
+					{
+						getPopup().show(e.getComponent(),
+		                           e.getX(), e.getY());
+					}
+				}
+			});
+	
+	
+		testRecordPane.add(screenLabel1);
+	
+		Label lumLabel1 = new Label("√基准",Label.CENTER);
+		
+//		lumLabel1.setBounds(430, 20, 80, 20);
+		lumLabel1.setPreferredSize(new Dimension(80, 20));
+
+		testRecordPane.add(lumLabel1);
+		
+		Label colorLabel1 = new Label("√基准",Label.CENTER);
+//		colorLabel1.setBounds(510, 20, 80, 20);
+		colorLabel1.setPreferredSize(new Dimension(80, 20));
+
+		testRecordPane.add(colorLabel1);
+		
+		Label splLabel1 = new Label("√基准",Label.CENTER);
+//		splLabel1.setBounds(590, 20, 80, 20);
+		splLabel1.setPreferredSize(new Dimension(80, 20));
+		testRecordPane.add(splLabel1);
+		
+		Label tempLabel1 = new Label("√基准",Label.CENTER);
+//		tempLabel1.setBounds(670, 20, 80, 20);
+		tempLabel1.setPreferredSize(new Dimension(80, 20));
+		testRecordPane.add(tempLabel1);
+		
+		testRecordPane.setPreferredSize(new Dimension(w, h));
+		testRecordPane.setBackground(Color.GRAY);
+//		testRecordPane.add(labelPane);
+	
 		//测试右键菜单，设为基准及导出测试结果命令
 		
-		return testListPane;
-		
+		return testRecordPane;
 	}
 	
 	public Button setBtn()//配节界面按钮事件
@@ -673,7 +772,8 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 		
 	}
 	
-	public JPanel cmdPanel()
+	public JPanel cmdPanel()//测试操作命令
+
 	{
 	
 		    for(int i=0;i<AllVarible.tableList.size();i++)
@@ -714,9 +814,10 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 		return cmdPanel ;
 	}
 	
-	public JPanel setPanel(int x){
+	public JPanel setPanel(int w,int h)//配置界面区域（以后需要添加配置文件选择）
+{
 		JPanel setPanel = new  JPanel();
-		setPanel.setPreferredSize(new Dimension(100, x));
+		setPanel.setPreferredSize(new Dimension(w, h));
 		setPanel.setBackground(Color.lightGray);
 		setPanel.setLayout(null);
 //		setBtn();
@@ -775,6 +876,58 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 		return chartpanel;
 	}
 
+    public	JPanel drawChart4(XYSeries measureX,XYSeries standerX,XYSeries measureY,XYSeries standerY,String Yname,int Ymin,int Ymax)
+	{
+		XYSeriesCollection dataset = new XYSeriesCollection(measureX);
+        dataset.addSeries(measureX);
+        dataset.addSeries(standerY);
+        dataset.addSeries(measureY);
+        dataset.addSeries(standerX);
+        JFreeChart jfreechart = ChartFactory.createXYLineChart("",
+				"", Yname, dataset, PlotOrientation.VERTICAL, false, false, true);
+		XYPlot xyplot = jfreechart.getXYPlot();
+		// 纵坐标设定
+		
+		ValueAxis valueaxis = xyplot.getDomainAxis();
+		valueaxis.setRange( 1, 300D );
+		valueaxis.setAutoRange(true);
+		valueaxis.setFixedAutoRange(300D);
+
+		valueaxis = xyplot.getRangeAxis();
+		valueaxis.setRange(Ymin,Ymax);
+		
+		// 配置字体
+    	Font xfont = new Font("宋体",Font.PLAIN,12) ;// X轴
+    	Font yfont = new Font("宋体",Font.PLAIN,12) ;// Y轴
+//    	Font kfont = new Font("宋体",Font.PLAIN,12) ;// 底部
+    	Font titleFont = new Font("隶书", Font.BOLD , 25) ; // 图片标题
+    	XYPlot plot = jfreechart.getXYPlot();// 图形的绘制结构对象
+    	
+    	// 图片标题
+    	jfreechart.setTitle(new TextTitle(jfreechart.getTitle().getText(),titleFont));
+    	
+    	// 底部
+//    	chart.getLegend().setItemFont(kfont);
+    	
+    	// X 轴
+    	ValueAxis domainAxis = plot.getDomainAxis();
+        domainAxis.setLabelFont(xfont);// 轴标题
+        domainAxis.setTickLabelFont(xfont);// 轴数值  
+        domainAxis.setTickLabelPaint(Color.BLACK) ; // 字体颜色
+//        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45); // 横轴上的label斜显示 
+        
+    	// Y 轴
+    	ValueAxis rangeAxis = plot.getRangeAxis();   
+        rangeAxis.setLabelFont(yfont); 
+        rangeAxis.setLabelPaint(Color.BLACK) ; // 字体颜色
+        rangeAxis.setTickLabelFont(yfont);  
+		
+		ChartPanel chartpanel = new ChartPanel(jfreechart);
+		chartpanel.setPreferredSize(new Dimension(400,300));
+		return chartpanel;
+	}
+
+	
 	static Class<?> getClass(String s) 
 	{
 		Class<?> cls = null;
@@ -786,7 +939,8 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 		return cls;
 	}
 		
-    public static String getAllData() throws UnknownHostException, IOException, InterruptedException
+    public static String getAllData() throws UnknownHostException, IOException, InterruptedException//访问指定的亮度计，获取数据
+
 	  {
 	  	Socket s = new Socket("192.168.50.160",10001);
 	  	BufferedWriter bufOut = 
@@ -867,57 +1021,6 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener
 //	              "values ('"+i+"',"+"'Leonis','2','LLAS-200','192.168.64.160','100','123','22.2','333'"+")"
 	          }
 	  
-    public	JPanel drawChart4(XYSeries measureX,XYSeries standerX,XYSeries measureY,XYSeries standerY,String Yname,int Ymin,int Ymax)
-	{
-		XYSeriesCollection dataset = new XYSeriesCollection(measureX);
-        dataset.addSeries(measureX);
-        dataset.addSeries(standerY);
-        dataset.addSeries(measureY);
-        dataset.addSeries(standerX);
-        JFreeChart jfreechart = ChartFactory.createXYLineChart("",
-				"", Yname, dataset, PlotOrientation.VERTICAL, false, false, true);
-		XYPlot xyplot = jfreechart.getXYPlot();
-		// 纵坐标设定
-		
-		ValueAxis valueaxis = xyplot.getDomainAxis();
-		valueaxis.setRange( 1, 300D );
-		valueaxis.setAutoRange(true);
-		valueaxis.setFixedAutoRange(300D);
-
-		valueaxis = xyplot.getRangeAxis();
-		valueaxis.setRange(Ymin,Ymax);
-		
-		// 配置字体
-    	Font xfont = new Font("宋体",Font.PLAIN,12) ;// X轴
-    	Font yfont = new Font("宋体",Font.PLAIN,12) ;// Y轴
-//    	Font kfont = new Font("宋体",Font.PLAIN,12) ;// 底部
-    	Font titleFont = new Font("隶书", Font.BOLD , 25) ; // 图片标题
-    	XYPlot plot = jfreechart.getXYPlot();// 图形的绘制结构对象
-    	
-    	// 图片标题
-    	jfreechart.setTitle(new TextTitle(jfreechart.getTitle().getText(),titleFont));
-    	
-    	// 底部
-//    	chart.getLegend().setItemFont(kfont);
-    	
-    	// X 轴
-    	ValueAxis domainAxis = plot.getDomainAxis();
-        domainAxis.setLabelFont(xfont);// 轴标题
-        domainAxis.setTickLabelFont(xfont);// 轴数值  
-        domainAxis.setTickLabelPaint(Color.BLACK) ; // 字体颜色
-//        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45); // 横轴上的label斜显示 
-        
-    	// Y 轴
-    	ValueAxis rangeAxis = plot.getRangeAxis();   
-        rangeAxis.setLabelFont(yfont); 
-        rangeAxis.setLabelPaint(Color.BLACK) ; // 字体颜色
-        rangeAxis.setTickLabelFont(yfont);  
-		
-		ChartPanel chartpanel = new ChartPanel(jfreechart);
-		chartpanel.setPreferredSize(new Dimension(400,300));
-		return chartpanel;
-	}
-    
     
     private JPanel detailPane()
     {

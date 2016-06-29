@@ -278,7 +278,6 @@ public class ExportTestReport {
 
 
     		   Font chinese = new Font(bfChinese, 12, Font.NORMAL); 
-    		   HeaderFooter footer=new HeaderFooter(new Phrase("-",chinese),new Phrase("-",chinese));
     			/**
     			 * 0是靠左
     			 * 1是居中
@@ -289,8 +288,6 @@ public class ExportTestReport {
 //    			footer.setBorder(Rectangle.BOX);
 //    		    doc.add(footer);
 //    		    doc.close();
-    		   //对其控制
-    		   String space ="                                 ";
     		  //亮度行
     		   String footerLum = "                                             "+QmsWindows.ynIndex[0].getText()+
     				   			  "           "+QmsWindows.msIndex[0].getText()+
