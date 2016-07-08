@@ -9,14 +9,19 @@ import org.jfree.ui.RefineryUtilities;
 class AllVarible
 {
 	static Thread threadChar;
-	static List<String> upDataList = new ArrayList<String>();
-	static List<String> historyDataList = new ArrayList<String>();
-	static List<String> tableList = new ArrayList<String>();
-	static String[] upDataContainer = new String[1000];
+	static List<String> upDataList = new ArrayList<String>();//上传数据列表
+	static  String[][] standerDataContainer = new String[200][400];//基准数据容器列表
+	static  String[][] testDataContainer = new String[200][400];
+	
+	static List<String> tableList = new ArrayList<String>();//历史测试列表
+	static List<String> standerList = new ArrayList<String>();//设置的基准列表
+	static int vec[] = new int [10];
+	static int dramNumber = 1;
+
 	static int curIndex =0;
 	static Boolean testControl =false ;
 	static String tableName ;
-	static String historyTableName;
+	static String[] standerTableName = new String[201];
 	static int mIndex = 0;
 	static int sIndex = 0;
 	
@@ -32,12 +37,22 @@ class AllVarible
 	static String AveTempreatureS;
 
 }
-public class Main {
+public class Main
+	{
+	
 	public static void main(String[] args) throws InterruptedException, UnknownHostException, IOException, SQLException {
 
-	QmsWindows TimeSeriesDemo1 = new QmsWindows();
-	TimeSeriesDemo1.pack();
-	RefineryUtilities.centerFrameOnScreen(TimeSeriesDemo1);
-	TimeSeriesDemo1.setVisible(true);
-}
+	QmsWindows QmsUi = new QmsWindows();
+	QmsUi.pack();
+	RefineryUtilities.centerFrameOnScreen(QmsUi);
+	QmsUi.setVisible(true);
+	
+//	GetTestDataThread aTestThread = new GetTestDataThread(0,"192.168.50.160",10001);
+//	aTestThread.start();
+//	GetTestDataThread aTestThread1 = new GetTestDataThread(1,"192.168.50.161",10001);
+//	aTestThread1.start();
+//////	
+//	GetTestDataThread.creatTable();
+	
+	}
 }
