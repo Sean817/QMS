@@ -28,7 +28,8 @@ public class GetTestDataThread extends Thread{
 	private  String tableName="";
 	private static  Socket s ;
 	private static double playTime[] = new double [200];
-
+	static BufferedWriter bufOut ;
+	static BufferedReader bufIn  ;
 //    static int dataIndex=0;
    
 
@@ -56,7 +57,7 @@ public class GetTestDataThread extends Thread{
 			try {
 				getAllData(index,equipmentIp,port);
 				Thread.sleep(500);
-				if(playTime[index]==200)
+				if(playTime[index]==100.5)
 					{
 						break; 
 					}
@@ -84,7 +85,7 @@ public class GetTestDataThread extends Thread{
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		for(int i=1;i<400;i++){
+		for(int i=1;i<201;i++){
 
 			String[] record = new String[8]; 
 //			System.out.println("~~"+index+"~~");
@@ -132,13 +133,13 @@ public class GetTestDataThread extends Thread{
 	  {
 	  		//历史数据下载
 //			qureyHistoryDb(connectMysql());
-
+		if(playTime[index]==0){
 			s = new Socket(equipmentIp,port);
-	  		BufferedWriter bufOut = 
+	  		bufOut = 
 	  				new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
-	  		BufferedReader bufIn = 
+	  		bufIn = 
 	  				new BufferedReader(new InputStreamReader(s. getInputStream()));
-	  			  
+		}
 	  		//获取设备名称
 //	  		String cmd_theaterNo = "GetTheaterNo"+"\r";
 //	  		String cmd_theater = "Lss100.sys.theater_name"+"\r";
@@ -186,7 +187,6 @@ public class GetTestDataThread extends Thread{
 		    bufOut.write(tempreature);
 		    bufOut.flush();
 		    String server_tempreature = bufIn.readLine().substring(0,4);
-		   
 		    
 		  	String data = playTime[index]+","
 	            		  	+server_HostName+","
@@ -245,6 +245,8 @@ public class GetTestDataThread extends Thread{
 		PreparedStatement pstmt;
 	    Connection conn = connectMysql();
 		String sql = "select * from "+AllVarible.standerTableName[index];//查询语句
+//		String sql = "select * from "+AllVarible.standerTableName[index]+"where Ip = 192.168.64";//查询语句
+
 
 		try {
 	 

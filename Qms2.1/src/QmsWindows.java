@@ -48,25 +48,40 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	Button cutBtn = new Button("细节");
+	static Button cutBtn = new Button("细节");
 	public static  Label[] numbers = new Label[8];
 	public static JLabel[] msIndex = new JLabel[8];
 	static JLabel[] msIndex1 = new JLabel[8];
 	public static Label[] rowIndex= new Label[8];
 	public static Label[] ynIndex = new Label[8];
 	public static Label[] ynIndex1 = new Label[9];
-	
 	public static JPanel[] testRecordPane = new JPanel[201];
     Button startBtn[] = new Button[201];
 
 	public static JTextField[] textPaneIndex = new JTextField[15];
-    JPanel ms = new JPanel();
+    static JPanel ms = new JPanel();
     Button stopBtn = new Button("停止");
     Button setBtn = new Button("配置");
+    Button sDchartBtn = new Button("均方差");
+    
+	static JPanel cutPanel = new JPanel(new BorderLayout());
+	static JPanel detailPane = new JPanel();
+
+    
 	JComboBox[] setList = new JComboBox[201];//2D 3D 设置
 	JComboBox historyList[] = new JComboBox[201];//历史测试列表
+	JComboBox sDList = new JComboBox<Object>();
 
-
+	public static JPanel chart_spl = new JPanel();
+	public static JPanel chart_lum = new JPanel();
+	public static JPanel chart_color = new JPanel();
+	public static JPanel chart_temperature = new JPanel();
+	public static JPanel sD_lumChart = new JPanel();
+	public static JPanel sD_splChart = new JPanel();
+	public static JPanel sD_colorChart = new JPanel();
+	public static JPanel sD_tempChart = new JPanel();
+    
+	static JPanel  rightPane = new JPanel();
 
 	JPanel labelPane = new JPanel();//名称标签
 	JPanel testListPane = new JPanel();//测试列表面板
@@ -80,6 +95,16 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 	static XYSeries stander_colorY = new XYSeries("");
 	static XYSeries temperature = new XYSeries("");
 	static XYSeries stander_temperature = new XYSeries("");
+	
+	
+	static XYSeries sD_spl = new XYSeries("");
+	static XYSeries sD_colorX = new XYSeries("");
+	static XYSeries sD_colorY = new XYSeries("");
+	static XYSeries sD_temp = new XYSeries("");	
+	static XYSeries sD_lum = new XYSeries("");
+	static XYSeries sD1 = new XYSeries("");
+
+	
 	
 	public static Double sqlD = (double) 0;
 	public static Double sqlW = (double) 0;
@@ -96,16 +121,13 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
         jPanel1 = new javax.swing.JPanel();
         
         GetTestDataThread.getTableNameByCon();//更新测试历史列表
-        getContentPane().setLayout(null);
+        getContentPane().setLayout(new FlowLayout());
         getContentPane().setPreferredSize(new Dimension(1200,700));
-
-        JPanel rightPane = new JPanel();
         rightPane.setPreferredSize(new Dimension(400, 700));
 //        rightPane.setLayout(new BorderLayout());
-        rightPane.add(cutPanel(400, 580));
-        
-        
-
+        detailPane();
+        rightPane.add(chartPanel(400, 580));
+        cutPanel();
 		JPanel leftPane = new JPanel();
 		leftPane.setPreferredSize(new Dimension(750, 700));
 //		leftPane.setLayout(new BorderLayout());
@@ -130,15 +152,19 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 		setPanel.setPreferredSize(new Dimension(w, h));
 		setPanel.setBackground(Color.lightGray);
 		setPanel.setLayout(null);
-		setBtn();
+		setBtnCmd();
+		sDchartBtnCmd();
 		setBtn.setBounds(0, 0, 60, 20);
-		setPanel.add(setBtn);
-			
+		sDchartBtn.setBounds(100,0,60,20);
+		cutBtn.setBounds(200,0, 60, 20);
+		setPanel.add(setBtn);//设置按钮
+		setPanel.add(cutBtn);//设置按钮
+		setPanel.add(sDchartBtn);//均方差曲线显示按钮
 			return setPanel;
 			
 		}
     
-	public Button setBtn()//配节界面按钮事件
+	public Button setBtnCmd()//配节界面按钮事件
 	{
 		
         setBtn.addActionListener(new ActionListener() {
@@ -231,45 +257,111 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 		
 	}
 
+	public Button sDchartBtnCmd()//配节界面按钮事件
+	{
+		
+		sDchartBtn.addActionListener(new ActionListener() {
+        	   @Override
+        	   public void actionPerformed(ActionEvent e) {
+        	   JFrame frame = new JFrame("均方差曲线");
+        	   
+        	    frame.setLayout(new BorderLayout());
+        	    frame.setSize(800, 400);
+        	    frame.setLocationRelativeTo(null); 
 
+        		Properties prop = new Properties();
+        		try {
+        			prop.load(new FileInputStream("/Users/Sean/Desktop/javawork/Qms2.1/src/Ipconfig.properties"));
+        		} catch (IOException e1) {
+        			// TODO Auto-generated catch block
+        			e1.printStackTrace();
+        		}
+                sDList = new JComboBox<Object>();
+
+            	int testCountNumbers = Integer.parseInt(prop.getProperty("TestCountNumbers"));
+        		for(int i =1;i<testCountNumbers+1;i++){
+        			sDList.addItem(prop.getProperty("Ip_No."+i));
+        		}
+        		
+        		//建立均方差
+              sD_lumChart = drawChartPanel(sD_spl, sD1,"亮度", 0, 2);
+              sD_splChart = drawChartPanel(sD_lum, sD1,"声音", 0, 2);
+              sD_colorChart = drawChartPanel(sD_colorX, sD_colorY,"色彩", 0, 2);
+              sD_tempChart = drawChartPanel(sD_temp, sD1,"温度", 0, 2);
+              int w = 400;
+              int h = 175;
+              sD_lumChart.setPreferredSize(new Dimension(w,h));
+              sD_splChart.setPreferredSize(new Dimension(w,h));
+              sD_colorChart.setPreferredSize(new Dimension(w,h));
+              sD_tempChart.setPreferredSize(new Dimension(w,h));
+    	    
+        	    //关闭配置界面
+              JPanel cmdPane = new JPanel();
+              cmdPane.setLayout(new BorderLayout());
+              cmdPane.add(sDList,"West");
+              Button sDDrawBtn = new Button("绘制");
+              cmdPane.add(sDDrawBtn,"East");
+              
+              JPanel sDChratPane = new JPanel();
+              sDChratPane.setLayout(new BorderLayout());
+              sDChratPane.add(sD_splChart,"West");
+              sDChratPane.add(sD_lumChart,"East");
+              
+              JPanel sDChratPane1 = new JPanel();
+              sDChratPane1.setLayout(new BorderLayout());
+              sDChratPane1.add(sD_colorChart,"West");
+              sDChratPane1.add(sD_tempChart,"East");
+              
+              JPanel Pane = new JPanel();
+              Pane.setLayout(new BorderLayout());
+              Pane.add(sDChratPane,"North");
+              Pane.add(sDChratPane1,"South");
+
+              
+              frame.add(Pane);
+              frame.add(cmdPane,"North");
+              frame.setVisible(true);
+        	   }
+        	  });
+		return sDchartBtn;
+	}
 	
-	private JPanel cutPanel(int cutPaneW,int cutPaneH){
-		CardLayout card = new CardLayout();
-		JPanel pane = new JPanel(card);
-		JPanel p = new JPanel();
-		p.add(cutBtn);
-		pane.add(chartPanel(cutPaneW,cutPaneH));
-		pane.add(detailPane());
-
+	private static void cutPanel(){
+//		CardLayout card = new CardLayout();
+//		JPanel pane = new JPanel(card);
 		cutBtn.addActionListener(new ActionListener()
-		 { // 下一步的按钮动作
+		 { 
+			// 下一步的按钮动作
 	            public void actionPerformed(ActionEvent e)
 	            {
 	                if (cutBtn.getLabel().toString()=="细节"){
 	                	cutBtn.setLabel("曲线图");
+	                	rightPane.remove(chartPanel(400,580));
+	            		rightPane.add(detailPane);
+
 	                }else {
 	                	cutBtn.setLabel("细节");
+	                	rightPane.remove(detailPane);
+	                	rightPane.add(chartPanel(400,580));
 					}
 
-	                card.next(pane);
+//	                card.next(pane);
 	            }
 	        });
-		JPanel p1 = new JPanel(new BorderLayout());
-		JPanel cutBtnPane = new JPanel();
-		cutBtnPane.setLayout(null);
-		cutBtnPane.setBackground(Color.lightGray);
-		cutBtnPane.setPreferredSize(new Dimension(100, 20));
-		cutBtn.setBounds(320, 0, 80, 20);
-		cutBtnPane.add(cutBtn);
-		p1.setLayout(new BorderLayout());
-		p1.add(cutBtnPane,"South");
-		p1.add(pane);
-    	return p1;
+//		JPanel cutBtnPane = new JPanel();
+//		cutBtnPane.setLayout(null);
+//		cutBtnPane.setBackground(Color.lightGray);
+//		cutBtnPane.setPreferredSize(new Dimension(100, 20));
+////		cutBtn.setBounds(320, 0, 80, 20);
+//////		cutBtnPane.add(cutBtn);
+//		cutPanel.setLayout(new BorderLayout());
+//		cutPanel.add(cutBtnPane,"South");
+////		cutPanel.add(pane);
+//    	return cutPanel;
     }
   
-	private JPanel detailPane()
+	private static JPanel detailPane()
     {
-    	JPanel detailPane = new JPanel();
 //    	detailPane.setBackground(Color.CYAN);
     	detailPane.setPreferredSize(new Dimension(200,400));
     	
@@ -388,7 +480,7 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
     	return detailPane;
     }
 
-	private JPanel chartPanel(int chartW,int chartH) {
+	private static JPanel chartPanel(int chartW,int chartH) {
 
 
        
@@ -408,7 +500,6 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 //        );
 //        jPanel1.add( comp );
 //        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(new FlowLayout());
 	    JPanel chartPanel=new JPanel();
 	    chartPanel.setLayout(new BorderLayout());
 	    JPanel p1=new JPanel();
@@ -417,12 +508,12 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 	    p2.setLayout(new BorderLayout());
        
 	    //添加四个曲线
-	    JPanel chart_spl = drawChartPanel(spl,stander_spl,"声音（dB）",0,100);
-	    JPanel chart_lum = drawChartPanel(lum,stander_lum,"亮度（fL）",1,999);
-	    JPanel chart_color =drawChart4Panel(colorX,stander_colorX,colorY,stander_colorY,"色度x|y",0,1);
-	    JPanel chart_temperature =drawChartPanel(temperature,stander_temperature,"温度（℃）",10,50);
+	    chart_spl = drawChartPanel(spl,stander_spl,"声音（dB）",0,100);
+	    chart_lum = drawChartPanel(lum,stander_lum,"亮度（fL）",1,999);
+	    chart_color =drawChart4Panel(colorX,stander_colorX,colorY,stander_colorY,"色度x|y",0,1);
+	    chart_temperature =drawChartPanel(temperature,stander_temperature,"温度（℃）",10,50);
 	    //折线大小
-	    int w =chartW;
+	    int w = chartW;
 	    int h = chartH/4;
 	    
 	    chart_spl.setPreferredSize(new Dimension(w,h));
@@ -458,7 +549,7 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 //        jPanel1.getAccessibleContext().setAccessibleName("饭店");
 //        pack();
     }
-	public	JPanel drawChartPanel(XYSeries measure,XYSeries stander,String Yname,int Ymin,int Ymax)
+	public static	JPanel drawChartPanel(XYSeries measure,XYSeries stander,String Yname,int Ymin,int Ymax)
 	{
 		XYSeriesCollection dataset = new XYSeriesCollection(measure);
         dataset.addSeries(stander);
@@ -469,10 +560,10 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 		// 纵坐标设定
 		
 		ValueAxis valueaxis = xyplot.getDomainAxis();
-		valueaxis.setRange( 1, 300D );
+		valueaxis.setRange( 1, 100D );
 		valueaxis.setAutoRange(true);
-		valueaxis.setFixedAutoRange(300D);
-
+		valueaxis.setFixedAutoRange(100D);
+//
 		valueaxis = xyplot.getRangeAxis();
 		valueaxis.setRange(Ymin,Ymax);
 		
@@ -507,7 +598,7 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 		return chartpanel;
 	}
 
-    public	JPanel drawChart4Panel(XYSeries measureX,XYSeries standerX,XYSeries measureY,XYSeries standerY,String Yname,int Ymin,int Ymax)
+    public static	JPanel drawChart4Panel(XYSeries measureX,XYSeries standerX,XYSeries measureY,XYSeries standerY,String Yname,int Ymin,int Ymax)
 	{
 		XYSeriesCollection dataset = new XYSeriesCollection(measureX);
         dataset.addSeries(measureX);
@@ -520,9 +611,9 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 		// 纵坐标设定
 		
 		ValueAxis valueaxis = xyplot.getDomainAxis();
-		valueaxis.setRange( 1, 300D );
+		valueaxis.setRange( 1, 100D );
 		valueaxis.setAutoRange(true);
-		valueaxis.setFixedAutoRange(300D);
+		valueaxis.setFixedAutoRange(100D);
 
 		valueaxis = xyplot.getRangeAxis();
 		valueaxis.setRange(Ymin,Ymax);
@@ -708,26 +799,26 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 	
 		testRecordPane[testNumber].add(screenLabel1);
 	
-		Label lumLabel1 = new Label("√基准",Label.CENTER);
+		Label lumLabel = new Label("√基准",Label.CENTER);
 		
 //		lumLabel1.setBounds(430, 20, 80, 20);
-		lumLabel1.setPreferredSize(new Dimension(80, 20));
-		testRecordPane[testNumber].add(lumLabel1);
+		lumLabel.setPreferredSize(new Dimension(80, 20));
+		testRecordPane[testNumber].add(lumLabel);
 		
-		Label colorLabel1 = new Label("√基准",Label.CENTER);
+		Label colorLabel = new Label("√基准",Label.CENTER);
 //		colorLabel1.setBounds(510, 20, 80, 20);
-		colorLabel1.setPreferredSize(new Dimension(80, 20));
-		testRecordPane[testNumber].add(colorLabel1);
+		colorLabel.setPreferredSize(new Dimension(80, 20));
+		testRecordPane[testNumber].add(colorLabel);
 		
-		Label splLabel1 = new Label("√基准",Label.CENTER);
+		Label splLabel = new Label("√基准",Label.CENTER);
 //		splLabel1.setBounds(590, 20, 80, 20);
-		splLabel1.setPreferredSize(new Dimension(80, 20));
-		testRecordPane[testNumber].add(splLabel1);
+		splLabel.setPreferredSize(new Dimension(80, 20));
+		testRecordPane[testNumber].add(splLabel);
 		
-		Label tempLabel1 = new Label("√基准",Label.CENTER);
+		Label tempLabel = new Label("√基准",Label.CENTER);
 //		tempLabel1.setBounds(670, 20, 80, 20);
-		tempLabel1.setPreferredSize(new Dimension(80, 20));
-		testRecordPane[testNumber].add(tempLabel1);
+		tempLabel.setPreferredSize(new Dimension(80, 20));
+		testRecordPane[testNumber].add(tempLabel);
 		
 		testRecordPane[testNumber].setPreferredSize(new Dimension(750, 30));
 		testRecordPane[testNumber].setBackground(Color.GRAY);
@@ -789,7 +880,7 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
     				item1.addActionListener(new ActionListener() {
     					public void actionPerformed(ActionEvent e) {
     		            	AllVarible.standerTableName[num] = historyList[num].getSelectedItem().toString();
-    		            	System.out.println(AllVarible.standerTableName[num]);
+//    		            	System.out.println(AllVarible.standerTableName[num]);
     					}
     				});
     				popup.add(item1);
@@ -815,7 +906,6 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
     					}
     				});
     				popup.add(item3);
-    				
     				popup.setInvoker(historyList[num]);
     			}
     			return popup;
@@ -839,28 +929,27 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 	}
 
 	public static void draw(int testNumber) throws InterruptedException{
-        List<String> list = new ArrayList<String>();  
-//		Iterator it = (Iterator) list.iterator(); 
-//		int historyIndex = 0;
+
+		
 		AllVarible.curIndex=0;
 		AllVarible.mIndex =0;
         int standerIndex=1;
-        
+//	    chart_spl = drawChartPanel(spl,stander_spl,"声音（dB）",0,100);
+//	    chart_lum = drawChartPanel(lum,stander_lum,"亮度（fL）",1,999);
+//	    chart_color =drawChart4Panel(colorX,stander_colorX,colorY,stander_colorY,"色度x|y",0,1);
+//	    chart_temperature =drawChartPanel(temperature,stander_temperature,"温度（℃）",10,50);
+////	    cutPanel();
+////		detailPane();
+
         for (String testData : AllVarible.testDataContainer[testNumber])
+
         {  
-			
             if(testData == null){
             	break;
             }
-            
-        	System.out.println(testData);  
+//        	System.out.println(testData);  
         	String[] str = testData.split(",");
 			String[] str1 = AllVarible.standerDataContainer[testNumber][standerIndex].split(",");
-
-			System.out.println(testData.split(",")[3]);
-			System.out.println(str1[1]);
-
-
 			String[] record =str;
 			String[] stander_record=str1;
 			
@@ -869,7 +958,7 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 			float playTime = Float.parseFloat(record[0]);
 //			System.out.println(playTime);
 			spl.add(playTime, a);
-			stander_spl.add(Float.parseFloat(str1[0]), Double.parseDouble(stander_record[1]));
+			stander_spl.add(playTime, Double.parseDouble(stander_record[1]));
 			double c = Double.parseDouble(record[4]);
 			lum.add(playTime, c);
 			stander_lum.add(playTime,Double.parseDouble(stander_record[2]));
@@ -884,136 +973,132 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 			double g = Double.parseDouble(record[7]);
 			temperature.add(playTime, g);
 			stander_temperature.add(playTime,Double.parseDouble(stander_record[5]));
-			
-			if(playTime%5==0&&playTime!=0)//测试均值显示
-				
-			{
-				Double sumSql = (double) 0;
-				Double sumLum = (double) 0;
-				Double sumColorX = (double) 0;
-				Double sumColorY = (double) 0;
-				Double sumTempreature = (double) 0;
-				Double sumSqlS = (double) 0;
-				Double sumLumS = (double) 0;
-				Double sumColorXS = (double) 0;
-				Double sumColorYS = (double) 0;
-				Double sumTempreatureS = (double) 0;
-				for(int i=1;i<11;i++)
-				{
-					int sumIndex =AllVarible.curIndex-9;
-//					String[] sumRecord = AllVarible.upDataContainer[sumIndex+i].split(",");
-//					String[] sumRecordS = AllVarible.historyDataList.get(sumIndex+i).split(",");
-					
-					String[] sumRecord = AllVarible.testDataContainer[testNumber][sumIndex].split(",");
-					String[] sumRecordS = AllVarible.standerDataContainer[testNumber][sumIndex+i].split(",");
-//					System.out.println("#####"+sumRecordS[1]+sumRecordS[2]+sumRecordS[3]);
+			standerIndex+=1;
+//	        rightPane.removeAll();;
 
-//					double recordSql = Double.parseDouble(sumRecord[3]);
-					sumSql = (Double) (sumSql+Double.parseDouble(sumRecord[3]));
-					sumLum = (Double) (sumLum+Double.parseDouble(sumRecord[4]));
-
-					sumColorX = (Double) (sumColorX+Double.parseDouble(sumRecord[5]));
-					sumColorY = (Double) (sumColorY+Double.parseDouble(sumRecord[6]));
-					
-					sumSqlS = (Double) (sumSqlS+Double.parseDouble(sumRecordS[1]));
-					sumLumS = (Double) (sumLumS+Double.parseDouble(sumRecordS[2]));
-					
-					sumColorXS = (Double) (sumColorXS+Double.parseDouble(sumRecordS[3]));
-					sumColorYS = (Double) (sumColorYS+Double.parseDouble(sumRecordS[4]));
-					
-					sumTempreature = (Double) (sumTempreature+Double.parseDouble(sumRecord[7]));
-					sumTempreatureS = (Double) (sumTempreatureS+Double.parseDouble(sumRecordS[5]));
-
-
-					
-//					System.out.println("~~~~~"+sumLumS);
-					System.out.println(sumLum-sumLumS);
-					if(i==10){
-					if((Math.abs(sumLum/5-sumLumS/5)>lumW) && (Math.abs(sumLum/5-sumLumS)<lumD))
-					{
-						ynIndex[0].setText("警");
-			        	ynIndex[0].setForeground(Color.YELLOW);
-					}
-					if (Math.abs(sumColorX-sumColorXS)>colorW&&Math.abs(sumColorX-sumColorXS)<colorD) {
-						ynIndex[AllVarible.mIndex+1].setText("警");
-			        	ynIndex[AllVarible.mIndex+1].setForeground(Color.YELLOW);
-
-					}
-					if (Math.abs(sumTempreatureS-sumTempreature)>tempW&&Math.abs(sumTempreatureS-sumTempreature)<tempD) {
-						ynIndex1[0].setText("警");
-			        	ynIndex1[0].setForeground(Color.YELLOW);
-					}
-					if (Math.abs(sumSqlS-sumSql)>sqlW&&Math.abs(sumSqlS-sumSql)<sqlD) 
-					{
-						ynIndex1[AllVarible.mIndex+1].setText("警");
-			        	ynIndex1[AllVarible.mIndex+1].setForeground(Color.YELLOW);
-					}
-					if(Math.abs(sumLum-sumLumS)>lumD)
-					{
-						ynIndex[0].setText("危");
-			        	ynIndex[0].setForeground(Color.RED);
-
-					}
-					if (Math.abs(sumColorX-sumColorXS)>colorD) 
-					{
-						ynIndex[AllVarible.mIndex+1].setText("危");
-			        	ynIndex[AllVarible.mIndex+1].setForeground(Color.RED);
-					}
-					if (Math.abs(sumTempreatureS-sumTempreature)>tempD) 
-					{
-//						System.out.println("*******"+Math.abs(sumTempreatureS-sumTempreature)+"@@@"+tempD);
-						
-						ynIndex1[0].setText("危");
-			        	ynIndex1[0].setForeground(Color.RED);
-					}
-					if (Math.abs(sumSqlS-sumSql)>sqlD) {
-						ynIndex1[AllVarible.mIndex+1].setText("危");
-			        	ynIndex1[AllVarible.mIndex+1].setForeground(Color.RED);
-					}
-				}
-				}
-				AllVarible.mIndex +=1;
-				AllVarible.curIndex +=1;
-//				if(AllVarible.mIndex>8)
+//			if(playTime%10==0&&playTime!=0)//测试均值显示
+//				
+//			{
+//				Double sumSql = (double) 0;
+//				Double sumLum = (double) 0;
+//				Double sumColorX = (double) 0;
+//				Double sumColorY = (double) 0;
+//				Double sumTempreature = (double) 0;
+//				Double sumSqlS = (double) 0;
+//				Double sumLumS = (double) 0;
+//				Double sumColorXS = (double) 0;
+//				Double sumColorYS = (double) 0;
+//				Double sumTempreatureS = (double) 0;
+//				for(int i=1;i<21;i++)
 //				{
-//					AllVarible.mIndex =0;
+//					int sumIndex =AllVarible.curIndex-9;
+////					String[] sumRecord = AllVarible.testDataContainer[testNumber][sumIndex].split(",");
+////
+//					String[] sumRecord = AllVarible.testDataContainer[testNumber][sumIndex].split(",");
+//					String[] sumRecordS = AllVarible.standerDataContainer[testNumber][sumIndex+i].split(",");
+//
+//					sumSql = (Double) (sumSql+Double.parseDouble(sumRecord[3]));
+//					sumLum = (Double) (sumLum+Double.parseDouble(sumRecord[4]));
+//
+//					sumColorX = (Double) (sumColorX+Double.parseDouble(sumRecord[5]));
+//					sumColorY = (Double) (sumColorY+Double.parseDouble(sumRecord[6]));
+//					
+//					sumSqlS = (Double) (sumSqlS+Double.parseDouble(sumRecordS[1]));
+//					sumLumS = (Double) (sumLumS+Double.parseDouble(sumRecordS[2]));
+//					
+//					sumColorXS = (Double) (sumColorXS+Double.parseDouble(sumRecordS[3]));
+//					sumColorYS = (Double) (sumColorYS+Double.parseDouble(sumRecordS[4]));
+//					
+//					sumTempreature = (Double) (sumTempreature+Double.parseDouble(sumRecord[7]));
+//					sumTempreatureS = (Double) (sumTempreatureS+Double.parseDouble(sumRecordS[5]));
+//
+//
+//					
+////					System.out.println("~~~~~"+sumLumS);
+//					System.out.println(sumLum-sumLumS);
+//					if(i==10){
+//					if((Math.abs(sumLum/20-sumLumS/20)>lumW) && (Math.abs(sumLum/20-sumLumS)<lumD))
+//					{
+//						ynIndex[0].setText("警");
+//			        	ynIndex[0].setForeground(Color.YELLOW);
+//					}
+//					if (Math.abs(sumColorX-sumColorXS)>colorW&&Math.abs(sumColorX-sumColorXS)<colorD) {
+//						ynIndex[AllVarible.mIndex+1].setText("警");
+//			        	ynIndex[AllVarible.mIndex+1].setForeground(Color.YELLOW);
+//
+//					}
+//					if (Math.abs(sumTempreatureS-sumTempreature)>tempW&&Math.abs(sumTempreatureS-sumTempreature)<tempD) {
+//						ynIndex1[0].setText("警");
+//			        	ynIndex1[0].setForeground(Color.YELLOW);
+//					}
+//					if (Math.abs(sumSqlS-sumSql)>sqlW&&Math.abs(sumSqlS-sumSql)<sqlD) 
+//					{
+//						ynIndex1[AllVarible.mIndex+1].setText("警");
+//			        	ynIndex1[AllVarible.mIndex+1].setForeground(Color.YELLOW);
+//					}
+//					if(Math.abs(sumLum-sumLumS)>lumD)
+//					{
+//						ynIndex[0].setText("危");
+//			        	ynIndex[0].setForeground(Color.RED);
+//
+//					}
+//					if (Math.abs(sumColorX-sumColorXS)>colorD) 
+//					{
+//						ynIndex[AllVarible.mIndex+1].setText("危");
+//			        	ynIndex[AllVarible.mIndex+1].setForeground(Color.RED);
+//					}
+//					if (Math.abs(sumTempreatureS-sumTempreature)>tempD) 
+//					{
+////						System.out.println("*******"+Math.abs(sumTempreatureS-sumTempreature)+"@@@"+tempD);
+//						
+//						ynIndex1[0].setText("危");
+//			        	ynIndex1[0].setForeground(Color.RED);
+//					}
+//					if (Math.abs(sumSqlS-sumSql)>sqlD) {
+//						ynIndex1[AllVarible.mIndex+1].setText("危");
+//			        	ynIndex1[AllVarible.mIndex+1].setForeground(Color.RED);
+//					}
 //				}
-				//平均值
-				AllVarible.AveSql = String.valueOf(String.format("%.2f",sumSql/5));
-				AllVarible.AveLum = String.valueOf(String.format("%.2f",sumLum/5));
-				
-				AllVarible.AveSqlS = String.valueOf(String.format("%.2f",sumSqlS/5));
-				AllVarible.AveLumS = String.valueOf(String.format("%.2f",sumLumS/5));
-
-				AllVarible.AveColorX = String.valueOf(String.format("%.2f",sumColorX/5));
-				AllVarible.AveColorY = String.valueOf(String.format("%.2f",sumColorY/5));
-				
-				AllVarible.AveColorXS = String.valueOf(String.format("%.2f",sumColorXS/5));
-				AllVarible.AveColorYS = String.valueOf(String.format("%.2f",sumColorYS/5));
-				
-				AllVarible.AveTempreature = String.valueOf(String.format("%.2f",sumTempreature/5));
-				AllVarible.AveTempreatureS = String.valueOf(String.format("%.2f",sumTempreatureS/5));
-				
-				QmsWindows.numbers[0].setText("            "+String.valueOf(String.format("%.2f",sumLum/5))
-				+"                       "+String.valueOf(String.format("%.2f",sumLumS/5)));
-				
-				
-				QmsWindows.numbers[AllVarible.mIndex].setText("        "
-							  +String.valueOf(String.format("%.2f",sumColorX/5)) 
-						+"   "+String.valueOf( String.format("%.2f",sumColorY/5))+"                " 
-							  +String.valueOf(String.format("%.2f",sumColorXS/5))
-						+"   "+String.valueOf( String.format("%.2f",sumColorYS/5)));
-				QmsWindows.rowIndex[0].setText("            "+String.valueOf(String.format("%.2f",sumTempreature/5))
-				+"                       "+String.valueOf(String.format("%.2f",sumTempreatureS/5)));
-				QmsWindows.rowIndex[AllVarible.mIndex].setText("            "+String.valueOf(String.format("%.2f",sumSql/5))
-				+"                       "+String.valueOf(String.format("%.2f",sumSqlS/5)));
-				}
-			AllVarible.curIndex +=1;
+//				}
+//				AllVarible.mIndex +=1;
+//				AllVarible.curIndex +=1;
+////				if(AllVarible.mIndex>8)
+////				{
+////					AllVarible.mIndex =0;
+////				}
+//				//平均值
+//				AllVarible.AveSql = String.valueOf(String.format("%.2f",sumSql/20));
+//				AllVarible.AveLum = String.valueOf(String.format("%.2f",sumLum/20));
+//				
+//				AllVarible.AveSqlS = String.valueOf(String.format("%.2f",sumSqlS/20));
+//				AllVarible.AveLumS = String.valueOf(String.format("%.2f",sumLumS/20));
+//
+//				AllVarible.AveColorX = String.valueOf(String.format("%.2f",sumColorX/20));
+//				AllVarible.AveColorY = String.valueOf(String.format("%.2f",sumColorY/20));
+//				
+//				AllVarible.AveColorXS = String.valueOf(String.format("%.2f",sumColorXS/20));
+//				AllVarible.AveColorYS = String.valueOf(String.format("%.2f",sumColorYS/20));
+//				
+//				AllVarible.AveTempreature = String.valueOf(String.format("%.2f",sumTempreature/20));
+//				AllVarible.AveTempreatureS = String.valueOf(String.format("%.2f",sumTempreatureS/20));
+//				
+//				QmsWindows.numbers[0].setText("            "+String.valueOf(String.format("%.2f",sumLum/20))
+//				+"                       "+String.valueOf(String.format("%.2f",sumLumS/20)));
+//				
+//				
+//				QmsWindows.numbers[AllVarible.mIndex].setText("        "
+//							  +String.valueOf(String.format("%.2f",sumColorX/20)) 
+//						+"   "+String.valueOf( String.format("%.2f",sumColorY/20))+"                " 
+//							  +String.valueOf(String.format("%.2f",sumColorXS/20))
+//						+"   "+String.valueOf( String.format("%.2f",sumColorYS/20)));
+//				QmsWindows.rowIndex[0].setText("            "+String.valueOf(String.format("%.2f",sumTempreature/20))
+//				+"                       "+String.valueOf(String.format("%.2f",sumTempreatureS/20)));
+//				QmsWindows.rowIndex[AllVarible.mIndex].setText("            "+String.valueOf(String.format("%.2f",sumSql/20))
+//				+"                       "+String.valueOf(String.format("%.2f",sumSqlS/20)));
+//				}
+//			AllVarible.curIndex +=1;
 			}
+//        rightPane.add(chartPanel(400, 580));
         }  
 //		
 	}
-
-
-
-

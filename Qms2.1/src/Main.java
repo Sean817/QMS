@@ -12,6 +12,8 @@ class AllVarible
 	static List<String> upDataList = new ArrayList<String>();//上传数据列表
 	static  String[][] standerDataContainer = new String[200][400];//基准数据容器列表
 	static  String[][] testDataContainer = new String[200][400];
+//	static  String testDataContainer[] = new String[200];
+
 	
 	static List<String> tableList = new ArrayList<String>();//历史测试列表
 	static List<String> standerList = new ArrayList<String>();//设置的基准列表
@@ -25,12 +27,13 @@ class AllVarible
 	static int mIndex = 0;
 	static int sIndex = 0;
 	
-	static String AveSql ;
-	static String AveLum ;
+	
+	static String AveSql;
+	static String AveLum;
 	static String AveColorX;
 	static String AveColorY;
 	static String AveTempreature;
-	static String AveSqlS ;
+	static String AveSqlS;
 	static String AveLumS;
 	static String AveColorXS;
 	static String AveColorYS;
