@@ -17,8 +17,8 @@ class AllVarible
 	
 	static List<String> tableList = new ArrayList<String>();//历史测试列表
 	static List<String> standerList = new ArrayList<String>();//设置的基准列表
-	static int vec[] = new int [10];
-	static int dramNumber = 1;
+	static int testDataContainerIndex[] = new int [10];
+	static int drawNumber = 1;
 
 	static int curIndex =0;
 	static Boolean testControl =false ;

@@ -336,34 +336,26 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 	            {
 	                if (cutBtn.getLabel().toString()=="细节"){
 	                	cutBtn.setLabel("曲线图");
-	                	rightPane.remove(chartPanel(400,580));
+	                	rightPane.removeAll();
 	            		rightPane.add(detailPane);
-
+	                	rightPane.updateUI();
 	                }else {
 	                	cutBtn.setLabel("细节");
-	                	rightPane.remove(detailPane);
+	                	rightPane.removeAll();
 	                	rightPane.add(chartPanel(400,580));
+	                	rightPane.updateUI();
 					}
 
 //	                card.next(pane);
 	            }
 	        });
-//		JPanel cutBtnPane = new JPanel();
-//		cutBtnPane.setLayout(null);
-//		cutBtnPane.setBackground(Color.lightGray);
-//		cutBtnPane.setPreferredSize(new Dimension(100, 20));
-////		cutBtn.setBounds(320, 0, 80, 20);
-//////		cutBtnPane.add(cutBtn);
-//		cutPanel.setLayout(new BorderLayout());
-//		cutPanel.add(cutBtnPane,"South");
-////		cutPanel.add(pane);
-//    	return cutPanel;
+
     }
   
 	private static JPanel detailPane()
     {
 //    	detailPane.setBackground(Color.CYAN);
-    	detailPane.setPreferredSize(new Dimension(200,400));
+    	detailPane.setPreferredSize(new Dimension(400,600));
     	
     	JPanel p1 = new JPanel();
 //		p1.setLayout(new BorderLayout());
@@ -475,8 +467,6 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
         detailPane.add(yn1);
         detailPane.add(ms1);
         detailPane.add(row);
-
-
     	return detailPane;
     }
 
@@ -556,43 +546,14 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 
         JFreeChart jfreechart = ChartFactory.createXYLineChart("",
 				"", Yname, dataset, PlotOrientation.VERTICAL, false, false, true);
-		XYPlot xyplot = jfreechart.getXYPlot();
 		// 纵坐标设定
-		
-		ValueAxis valueaxis = xyplot.getDomainAxis();
-		valueaxis.setRange( 1, 100D );
-		valueaxis.setAutoRange(true);
-		valueaxis.setFixedAutoRange(100D);
-//
-		valueaxis = xyplot.getRangeAxis();
-		valueaxis.setRange(Ymin,Ymax);
-		
-		// 配置字体
-    	Font xfont = new Font("宋体",Font.PLAIN,12) ;// X轴
-    	Font yfont = new Font("宋体",Font.PLAIN,12) ;// Y轴
-//    	Font kfont = new Font("宋体",Font.PLAIN,12) ;// 底部
-    	Font titleFont = new Font("隶书", Font.BOLD , 25) ; // 图片标题
-    	XYPlot plot = jfreechart.getXYPlot();// 图形的绘制结构对象
-    	
-    	// 图片标题
-    	jfreechart.setTitle(new TextTitle(jfreechart.getTitle().getText(),titleFont));
-    	
-    	// 底部
-//    	chart.getLegend().setItemFont(kfont);
-    	
-    	// X 轴
-    	ValueAxis domainAxis = plot.getDomainAxis();
-        domainAxis.setLabelFont(xfont);// 轴标题
-        domainAxis.setTickLabelFont(xfont);// 轴数值  
-        domainAxis.setTickLabelPaint(Color.BLACK) ; // 字体颜色
-//        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45); // 横轴上的label斜显示 
-        
-    	// Y 轴
-    	ValueAxis rangeAxis = plot.getRangeAxis();   
-        rangeAxis.setLabelFont(yfont); 
-        rangeAxis.setLabelPaint(Color.BLACK) ; // 字体颜色
-        rangeAxis.setTickLabelFont(yfont);  
-		
+		 XYPlot plot = (XYPlot) jfreechart.getPlot();      
+		 ValueAxis valueaxis = plot.getDomainAxis();
+		 valueaxis.setRange( 0, 100D );
+	        // 背景色 透明度      
+	        plot.setBackgroundAlpha(1f);      
+		    // 前景色 透明度      
+	        plot.setForegroundAlpha(1f); 		
 		ChartPanel chartpanel = new ChartPanel(jfreechart);
 		chartpanel.setPreferredSize(new Dimension(400,300));
 		return chartpanel;
@@ -607,42 +568,16 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
         dataset.addSeries(standerX);
         JFreeChart jfreechart = ChartFactory.createXYLineChart("",
 				"", Yname, dataset, PlotOrientation.VERTICAL, false, false, true);
-		XYPlot xyplot = jfreechart.getXYPlot();
 		// 纵坐标设定
 		
-		ValueAxis valueaxis = xyplot.getDomainAxis();
-		valueaxis.setRange( 1, 100D );
-		valueaxis.setAutoRange(true);
-		valueaxis.setFixedAutoRange(100D);
-
-		valueaxis = xyplot.getRangeAxis();
-		valueaxis.setRange(Ymin,Ymax);
-		
+        XYPlot plot = (XYPlot) jfreechart.getPlot();      
+		ValueAxis valueaxis = plot.getDomainAxis();
+		valueaxis.setRange( 0, 100D );
+        // 背景色 透明度      
+        plot.setBackgroundAlpha(1f);      
+	    // 前景色 透明度      
+        plot.setForegroundAlpha(1f); 
 		// 配置字体
-    	Font xfont = new Font("宋体",Font.PLAIN,12) ;// X轴
-    	Font yfont = new Font("宋体",Font.PLAIN,12) ;// Y轴
-//    	Font kfont = new Font("宋体",Font.PLAIN,12) ;// 底部
-    	Font titleFont = new Font("隶书", Font.BOLD , 25) ; // 图片标题
-    	XYPlot plot = jfreechart.getXYPlot();// 图形的绘制结构对象
-    	
-    	// 图片标题
-    	jfreechart.setTitle(new TextTitle(jfreechart.getTitle().getText(),titleFont));
-    	
-    	// 底部
-//    	chart.getLegend().setItemFont(kfont);
-    	
-    	// X 轴
-    	ValueAxis domainAxis = plot.getDomainAxis();
-        domainAxis.setLabelFont(xfont);// 轴标题
-        domainAxis.setTickLabelFont(xfont);// 轴数值  
-        domainAxis.setTickLabelPaint(Color.BLACK) ; // 字体颜色
-//        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45); // 横轴上的label斜显示 
-        
-    	// Y 轴
-    	ValueAxis rangeAxis = plot.getRangeAxis();   
-        rangeAxis.setLabelFont(yfont); 
-        rangeAxis.setLabelPaint(Color.BLACK) ; // 字体颜色
-        rangeAxis.setTickLabelFont(yfont);  
 		
 		ChartPanel chartpanel = new ChartPanel(jfreechart);
 		chartpanel.setPreferredSize(new Dimension(400,300));
@@ -786,7 +721,7 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 				if(e.getButton() == MouseEvent.BUTTON1)
 				{
 					System.out.println(testNumber+"Start Drawing");
-					AllVarible.dramNumber=testNumber;
+					AllVarible.drawNumber=testNumber;
 //					try {
 //						draw(AllVarible.dramNumber);
 //					} catch (InterruptedException e1) {
@@ -941,6 +876,7 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 ////	    cutPanel();
 ////		detailPane();
 
+
         for (String testData : AllVarible.testDataContainer[testNumber])
 
         {  
@@ -975,7 +911,7 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 			stander_temperature.add(playTime,Double.parseDouble(stander_record[5]));
 			standerIndex+=1;
 //	        rightPane.removeAll();;
-
+			
 //			if(playTime%10==0&&playTime!=0)//测试均值显示
 //				
 //			{
@@ -1098,7 +1034,9 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 //				}
 //			AllVarible.curIndex +=1;
 			}
+//        rightPane.removeAll();
 //        rightPane.add(chartPanel(400, 580));
+//        rightPane.add(chartPanel(400, 580));
+        rightPane.updateUI();
         }  
-//		
 	}

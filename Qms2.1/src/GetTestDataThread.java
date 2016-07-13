@@ -1,9 +1,7 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.sql.Connection;
@@ -12,12 +10,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 
 import com.mysql.jdbc.DatabaseMetaData;
-import com.mysql.jdbc.Statement;
 
 public class GetTestDataThread extends Thread{
 
@@ -26,10 +22,10 @@ public class GetTestDataThread extends Thread{
 	private  int port; 
 	private  int index; 
 	private  String tableName="";
-	private static  Socket s ;
+	private static  Socket s=null ;
 	private static double playTime[] = new double [200];
-	static BufferedWriter bufOut ;
-	static BufferedReader bufIn  ;
+	static OutputStream out =null;
+	static InputStream in =null ;
 //    static int dataIndex=0;
    
 
@@ -51,12 +47,33 @@ public class GetTestDataThread extends Thread{
 			// TODO Auto-generated catch block
 			e3.printStackTrace();
 		}
+		if(playTime[index]==0){
+			try {
+		    	s = new Socket(equipmentIp,port);
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	  		try {
+	  			 out = s.getOutputStream();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	  		try {
+	  			 in = s.getInputStream();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		while(true)
 		{
 			
 			try {
 				getAllData(index,equipmentIp,port);
-				Thread.sleep(500);
+				Thread.sleep(200);
 				if(playTime[index]==100.5)
 					{
 						break; 
@@ -67,7 +84,7 @@ public class GetTestDataThread extends Thread{
 				e.printStackTrace();
 				}
 			try {
-				QmsWindows.draw(AllVarible.dramNumber);
+				QmsWindows.draw(AllVarible.drawNumber);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -133,61 +150,67 @@ public class GetTestDataThread extends Thread{
 	  {
 	  		//历史数据下载
 //			qureyHistoryDb(connectMysql());
-		if(playTime[index]==0){
-			s = new Socket(equipmentIp,port);
-	  		bufOut = 
-	  				new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
-	  		bufIn = 
-	  				new BufferedReader(new InputStreamReader(s. getInputStream()));
-		}
+
 	  		//获取设备名称
 //	  		String cmd_theaterNo = "GetTheaterNo"+"\r";
 //	  		String cmd_theater = "Lss100.sys.theater_name"+"\r";
 	        String cmd_hostname = "GetHostName"+"\r";
-	        bufOut.write(cmd_hostname);
-	        bufOut.flush();
-	        String server_HostName = bufIn.readLine().replace(" ", "");
-//	         			 System.out.println(server_HostName);
+	        out.write(cmd_hostname.getBytes());
+			byte[] buf = new byte[1024];//建立缓冲区
+			int len = in.read(buf);//读取数据放进缓冲
+	        String server_HostName = new String(buf,0,len)+"\b".replace(" ", "");
+//			System.out.print(server_HostName+"111");//打印
+
 
 	        //获取设备Ip
 	        String cmd_getIp = "Getip"+"\r";
-	        bufOut.write(cmd_getIp);
-	        bufOut.flush();
-	        String server_getIp = bufIn.readLine();
-//	              System.out.println(server_getIp);
-	              
-	          	  //声音
+	        out.write(cmd_getIp.getBytes());
+			len = in.read(buf);//读取数据放进缓冲
+	        String server_getIp = new String(buf,0,len);
+//			System.out.print(server_getIp);//打印
+
+//	              
+//	          	  //声音
 	        String soundPressyreLevel = "GetS"+"\r";
-	        bufOut.write(soundPressyreLevel);
-	        bufOut.flush();
-	        String server_soundPressyreLevel = bufIn.readLine();
-//	              System.out.println(server_soundPressyreLevel);
-//	         
-	              //光照
+	        out.write(soundPressyreLevel.getBytes());
+			len = in.read(buf);//读取数据放进缓冲
+	        String server_soundPressyreLevel = new String(buf,0,len);
+//			System.out.print(server_soundPressyreLevel);//打印
+
+////	         
+//	              //光照
 	        String luminance = "GetF"+"\r";
-	        bufOut.write(luminance);
-	        bufOut.flush();
-	        String server_luminance = bufIn.readLine();
-	              
-	              //色x
+			out.write(luminance.getBytes());
+			len = in.read(buf);//读取数据放进缓冲
+	        String server_luminance = new String(buf,0,len);
+//			System.out.print(server_luminance);//打印
+
+//	       
+//	              
+//	              //色x
 	        String colorTempreature = "GetX"+"\r";
-	        bufOut.write(colorTempreature);
-	        bufOut.flush();
-	        String server_colorTempreatureX = bufIn.readLine();
-//	              System.out.println(server_colorTempreatureX);
-	              
-		              //色y
+			out.write(colorTempreature.getBytes());
+			len = in.read(buf);//读取数据放进缓冲
+	        String server_colorTempreatureX =  new String(buf,0,len);
+//			System.out.print(server_colorTempreatureX);//打印
+//	        
+//	              
+//		              //色y
 		    String colorTempreatureY = "GetY"+"\r";
-		    bufOut.write(colorTempreatureY);
-		    bufOut.flush();
-		    String server_colorTempreatureY = bufIn.readLine();
-//	              System.out.println(server_colorTempreatureY);
-	              
+			out.write(colorTempreatureY.getBytes());
+			len = in.read(buf);//读取数据放进缓冲
+	        String server_colorTempreatureY = new String(buf,0,len);
+//			System.out.print(server_colorTempreatureY);//打印
+
+//	              
 		    String tempreature = "Lss100.sys.temperature"+"\r";
-		    bufOut.write(tempreature);
-		    bufOut.flush();
-		    String server_tempreature = bufIn.readLine().substring(0,4);
-		    
+			out.write(tempreature.getBytes());
+			len = in.read(buf);//读取数据放进缓冲
+	        String server_tempreature = new String(buf,0,len).substring(0,4);
+//			System.out.print(server_tempreature);//打印
+
+
+//		    
 		  	String data = playTime[index]+","
 	            		  	+server_HostName+","
 	              			+server_getIp+","
@@ -197,11 +220,11 @@ public class GetTestDataThread extends Thread{
 	              			+server_colorTempreatureY+","
 	              			+server_tempreature;
 		  	playTime[index]+=0.5;
-		  	
-		  	AllVarible.testDataContainer[index][AllVarible.vec[index]] = data;
-		  	System.out.println(AllVarible.testDataContainer[index][AllVarible.vec[index]]+"!!!"+index);
+//		  	
+		  	AllVarible.testDataContainer[index][AllVarible.testDataContainerIndex[index]] = data;
+		  	System.out.println(data.substring(0,4)+"!!!"+index);
 //		  	AllVarible.curIndex+=1;
-		  	AllVarible.vec[index]+=1;
+		  	AllVarible.testDataContainerIndex[index]+=1;
 
 //		  	s.close(); 
 	  }
