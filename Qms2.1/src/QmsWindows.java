@@ -877,38 +877,48 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 ////		detailPane();
 
 
-        for (String testData : AllVarible.testDataContainer[testNumber])
+        for (int i=1;i<AllVarible.testDataContainerIndex[testNumber];i++)
 
         {  
-            if(testData == null){
+            if( AllVarible.testDataContainer[testNumber][AllVarible.testDataContainerIndex[testNumber]]
+            		== null)
+            {
             	break;
             }
 //        	System.out.println(testData);  
-        	String[] str = testData.split(",");
+//        	String[] str = testData.split(",");
 			String[] str1 = AllVarible.standerDataContainer[testNumber][standerIndex].split(",");
-			String[] record =str;
+//			String[] record =str;
 			String[] stander_record=str1;
 			
-			double a = Double.parseDouble(record[3]);
-//			Double playTime = Double.parseDouble(record[0]);
-			float playTime = Float.parseFloat(record[0]);
-//			System.out.println(playTime);
-			spl.add(playTime, a);
-			stander_spl.add(playTime, Double.parseDouble(stander_record[1]));
-			double c = Double.parseDouble(record[4]);
-			lum.add(playTime, c);
-			stander_lum.add(playTime,Double.parseDouble(stander_record[2]));
-			//色彩曲线数据
-			double e = Double.parseDouble(record[5]);
-			double f = Double.parseDouble(record[6]);
-			colorX.add(playTime, e);
-			stander_colorX.add(playTime,Double.parseDouble(stander_record[3]));
-			colorY.add(playTime, f);
-			stander_colorY.add(playTime,Double.parseDouble(stander_record[4]));
+			float playTime = AllVarible.testDataContainer[testNumber][standerIndex][0];
+			float soundPressyreLevel = AllVarible.testDataContainer[testNumber][standerIndex][1];
+			float luminance = AllVarible.testDataContainer[testNumber][standerIndex][2];
+			float colorTempX =AllVarible.testDataContainer[testNumber][standerIndex][3];
+			float colorTempY =AllVarible.testDataContainer[testNumber][standerIndex][4];
+			float tempreature = AllVarible.testDataContainer[testNumber][standerIndex][5];
+			float playTimeS = Float.parseFloat(stander_record[0]);
+			float soundPressyreLevelS = Float.parseFloat(stander_record[1]);
+			float luminanceS = Float.parseFloat(stander_record[2]);
+			float colorTempXS = Float.parseFloat(stander_record[3]);
+			float colorTempYS = Float.parseFloat(stander_record[4]);
+			float tempreatureS = Float.parseFloat(stander_record[5]);
+
+			spl.add(playTime, soundPressyreLevel);
+			stander_spl.add(playTime,soundPressyreLevelS);
+			
+			lum.add(playTime,luminance);
+			stander_lum.add(playTime,luminanceS);
+			
+			colorX.add(playTime, colorTempX);
+			stander_colorX.add(playTime,colorTempXS);
+			
+			colorY.add(playTime, colorTempY);
+			stander_colorY.add(playTime,colorTempYS);
 			//温度曲线数据
-			double g = Double.parseDouble(record[7]);
-			temperature.add(playTime, g);
-			stander_temperature.add(playTime,Double.parseDouble(stander_record[5]));
+			temperature.add(playTime, tempreature);
+			stander_temperature.add(playTime,tempreatureS);
+			
 			standerIndex+=1;
 //	        rightPane.removeAll();;
 			
@@ -1037,6 +1047,5 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 //        rightPane.removeAll();
 //        rightPane.add(chartPanel(400, 580));
 //        rightPane.add(chartPanel(400, 580));
-        rightPane.updateUI();
         }  
 	}

@@ -11,7 +11,9 @@ class AllVarible
 	static Thread threadChar;
 	static List<String> upDataList = new ArrayList<String>();//上传数据列表
 	static  String[][] standerDataContainer = new String[200][400];//基准数据容器列表
-	static  String[][] testDataContainer = new String[200][400];
+	static  Float[][][] testDataContainer = new Float[200][400][6];//基准数据容器列表
+
+	static  String[][] upDataContainer = new String[200][400];
 //	static  String testDataContainer[] = new String[200];
 
 	

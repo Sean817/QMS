@@ -21,9 +21,10 @@ public class GetTestDataThread extends Thread{
 	private  String equipmentIp ; 
 	private  int port; 
 	private  int index; 
+	static int j;
 	private  String tableName="";
 	private static  Socket s=null ;
-	private static double playTime[] = new double [200];
+	private static float playTime[] = new float [200];
 	static OutputStream out =null;
 	static InputStream in =null ;
 //    static int dataIndex=0;
@@ -73,7 +74,7 @@ public class GetTestDataThread extends Thread{
 			
 			try {
 				getAllData(index,equipmentIp,port);
-				Thread.sleep(200);
+				Thread.sleep(500);
 				if(playTime[index]==100.5)
 					{
 						break; 
@@ -106,7 +107,7 @@ public class GetTestDataThread extends Thread{
 
 			String[] record = new String[8]; 
 //			System.out.println("~~"+index+"~~");
-			record =AllVarible.testDataContainer[index][i].split(",");
+			record =AllVarible.upDataContainer[index][i].split(",");
 			Double insert_playTime=Double.parseDouble(record[0]);
 			String insert_HostName = record[1];
 			String insert_getIp = record[2];
@@ -158,7 +159,7 @@ public class GetTestDataThread extends Thread{
 	        out.write(cmd_hostname.getBytes());
 			byte[] buf = new byte[1024];//建立缓冲区
 			int len = in.read(buf);//读取数据放进缓冲
-	        String server_HostName = new String(buf,0,len)+"\b".replace(" ", "");
+	        String server_HostName = new String(buf,0,len).replace(" ", "");
 //			System.out.print(server_HostName+"111");//打印
 
 
@@ -207,9 +208,13 @@ public class GetTestDataThread extends Thread{
 			out.write(tempreature.getBytes());
 			len = in.read(buf);//读取数据放进缓冲
 	        String server_tempreature = new String(buf,0,len).substring(0,4);
-//			System.out.print(server_tempreature);//打印
-
-
+			System.out.print(server_tempreature);//打印
+			AllVarible.testDataContainer[index][AllVarible.testDataContainerIndex[index]][0]=playTime[index];
+			AllVarible.testDataContainer[index][AllVarible.testDataContainerIndex[index]][1]= Float.parseFloat(server_soundPressyreLevel);;     
+			AllVarible.testDataContainer[index][AllVarible.testDataContainerIndex[index]][2]= Float.parseFloat(server_luminance);
+			AllVarible.testDataContainer[index][AllVarible.testDataContainerIndex[index]][3]= Float.parseFloat(server_colorTempreatureX);
+			AllVarible.testDataContainer[index][AllVarible.testDataContainerIndex[index]][4]= Float.parseFloat(server_colorTempreatureY);
+			AllVarible.testDataContainer[index][AllVarible.testDataContainerIndex[index]][5]= Float.parseFloat(server_tempreature);
 //		    
 		  	String data = playTime[index]+","
 	            		  	+server_HostName+","
@@ -221,11 +226,11 @@ public class GetTestDataThread extends Thread{
 	              			+server_tempreature;
 		  	playTime[index]+=0.5;
 //		  	
-		  	AllVarible.testDataContainer[index][AllVarible.testDataContainerIndex[index]] = data;
+		  	AllVarible.upDataContainer[index][AllVarible.testDataContainerIndex[index]] = data;
 		  	System.out.println(data.substring(0,4)+"!!!"+index);
 //		  	AllVarible.curIndex+=1;
 		  	AllVarible.testDataContainerIndex[index]+=1;
-
+		  	
 //		  	s.close(); 
 	  }
 	static Connection connectMysql() throws UnknownHostException, IOException, InterruptedException, SQLException
