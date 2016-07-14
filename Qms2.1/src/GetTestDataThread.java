@@ -272,14 +272,18 @@ public class GetTestDataThread extends Thread{
 	{
 		PreparedStatement pstmt;
 	    Connection conn = connectMysql();
-		String sql = "select * from "+AllVarible.standerTableName[index];//查询语句
+		String sql = "select * from "+AllVarible.standerTableName[index].substring(AllVarible.standerTableName[index].indexOf("s")+1);//查询语句
 //		String sql = "select * from "+AllVarible.standerTableName[index]+"where Ip = 192.168.64";//查询语句
-
+		String sql1 = "select * from "+AllVarible.standerTableName[index];
 
 		try {
 	 
 	       pstmt = (PreparedStatement)conn.prepareStatement(sql);
+	       PreparedStatement pstmt1 = (PreparedStatement)conn.prepareStatement(sql1);
+
 	       ResultSet rs = pstmt.executeQuery();
+	       ResultSet rs1 = pstmt1.executeQuery();
+
 		   System.out.println(AllVarible.standerTableName[index]);
 
 //		   String sql = "select * from t201662141845";//查询语句
@@ -287,7 +291,9 @@ public class GetTestDataThread extends Thread{
 
 		   //得到结果集
 		   String a = new String();
-		   int i = 1;
+		   String a1 = new String();
+		   int i = 0;
+		   int j = 0;
 		   while (rs.next()) {//如果有数据，取第一列添加如list
 			   a = rs.getString(1)+","
 			  +rs.getString(4)+","
@@ -295,12 +301,27 @@ public class GetTestDataThread extends Thread{
 			  +rs.getString(6)+","
 			  +rs.getString(7)+","
 			  +rs.getString(8);
-//			  System.out.println(a+"null");
-			  AllVarible.standerDataContainer[index][200] = new String();
+//			  System.out.println(a+"history");
+//			  AllVarible.standerDataContainer[index][200] = new String();
 			  AllVarible.standerDataContainer[index][i]= a ;
 			  i+=1;
 		   }
 			  System.out.println("No."+index+"Downlaod Complete!");
+		   while (rs1.next()) {//如果有数据，取第一列添加如list
+			   a1 = rs1.getString(1)+","
+			  +rs1.getString(4)+","
+			  +rs1.getString(5)+","
+			  +rs1.getString(6)+","
+			  +rs1.getString(7)+","
+			  +rs1.getString(8);
+//			  AllVarible.testDataContainer1[index][200] = new String();
+			  AllVarible.testDataContainer1[index][j]= a1 ;
+//			  System.out.println(AllVarible.testDataContainer1[index][j]+"test");
+
+			  j+=1;
+		   }
+			  System.out.println("No."+index+"Downlaod Complete!");
+
 
 	  } catch (Exception e) 
 	 		{
@@ -339,11 +360,9 @@ public class GetTestDataThread extends Thread{
 		   DatabaseMetaData meta = (DatabaseMetaData) con.getMetaData();
 		   ResultSet rs = meta.getTables(null, null, null,
 		   new String[] { "TABLE" });
-		
-		   while (rs.next()) {
-			   
+		   while (rs.next()) 
+		   {
 			 AllVarible.tableList.add(rs.getString(3));
-		 
 		   }
 		   con.close();
 		   } catch (Exception e) {
@@ -355,7 +374,6 @@ public class GetTestDataThread extends Thread{
 		   e.printStackTrace();
 		   }
 		}
-
 //	public static void main() {
 //		
 //		GetTestDataThread aTestThread  = new GetTestDataThread("192.168.50.160",10001);

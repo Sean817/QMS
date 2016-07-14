@@ -11,6 +11,8 @@ class AllVarible
 	static Thread threadChar;
 	static List<String> upDataList = new ArrayList<String>();//上传数据列表
 	static  String[][] standerDataContainer = new String[200][400];//基准数据容器列表
+	static  String[][] testDataContainer1 = new String[200][400];//基准数据容器列表
+
 	static  Float[][][] testDataContainer = new Float[200][400][6];//基准数据容器列表
 
 	static  String[][] upDataContainer = new String[200][400];
@@ -25,7 +27,9 @@ class AllVarible
 	static int curIndex =0;
 	static Boolean testControl =false ;
 	static String tableName ;
-	static String[] standerTableName = new String[201];
+	static String[] standerTableName = new String[200];
+	static String[] TestTableName = new String[200];
+
 	static int mIndex = 0;
 	static int sIndex = 0;
 	

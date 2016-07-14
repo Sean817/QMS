@@ -805,7 +805,7 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 		
 	}
     
-    private JPopupMenu getPopup(int num) //右键菜单列表
+    private JPopupMenu getPopup(int testNumber) //右键菜单列表
     {
     			JPopupMenu popup = null;
     			if(popup == null) {
@@ -814,7 +814,7 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
     				JMenuItem item1  = new JMenuItem("设为基准");
     				item1.addActionListener(new ActionListener() {
     					public void actionPerformed(ActionEvent e) {
-    		            	AllVarible.standerTableName[num] = historyList[num].getSelectedItem().toString();
+    		            	AllVarible.standerTableName[testNumber] = historyList[testNumber].getSelectedItem().toString();
 //    		            	System.out.println(AllVarible.standerTableName[num]);
     					}
     				});
@@ -825,11 +825,19 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
     					public void actionPerformed(ActionEvent e) {
     						//导出PDF报告
     						try {
-    							ExportTestReport.exprotChartPicture();
+    							AllVarible.standerTableName[testNumber] = historyList[testNumber].getSelectedItem().toString();
+    							GetTestDataThread.qureyHistoryDb(testNumber);
+    							ExportTestReport.exprotChartPicture(testNumber);
     						} catch (IOException e1) {
     							// TODO Auto-generated catch block
     							e1.printStackTrace();
-    						}
+    						} catch (InterruptedException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							} catch (SQLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
     					}
     				});
     				popup.add(item2);
@@ -841,14 +849,10 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
     					}
     				});
     				popup.add(item3);
-    				popup.setInvoker(historyList[num]);
+    				popup.setInvoker(historyList[testNumber]);
     			}
     			return popup;
     		}
-    
-    public static void drawPicture(String testData,String standerData) {
-		
-	}
     
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -856,196 +860,198 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 		
 	}
 
-
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		
 	}
 
+	public static void detailData(int testNumber) {
+		
+		//数组中含有元素个数
+
+		System.out.println(AllVarible.testDataContainerIndex[testNumber]);
+	
+	
+	}
+	
+	
+	
 	public static void draw(int testNumber) throws InterruptedException{
 
 		
 		AllVarible.curIndex=0;
 		AllVarible.mIndex =0;
         int standerIndex=1;
-//	    chart_spl = drawChartPanel(spl,stander_spl,"声音（dB）",0,100);
-//	    chart_lum = drawChartPanel(lum,stander_lum,"亮度（fL）",1,999);
-//	    chart_color =drawChart4Panel(colorX,stander_colorX,colorY,stander_colorY,"色度x|y",0,1);
-//	    chart_temperature =drawChartPanel(temperature,stander_temperature,"温度（℃）",10,50);
-////	    cutPanel();
-////		detailPane();
-
-
         for (int i=1;i<AllVarible.testDataContainerIndex[testNumber];i++)
-
         {  
             if( AllVarible.testDataContainer[testNumber][AllVarible.testDataContainerIndex[testNumber]]
             		== null)
             {
             	break;
             }
-//        	System.out.println(testData);  
-//        	String[] str = testData.split(",");
 			String[] str1 = AllVarible.standerDataContainer[testNumber][standerIndex].split(",");
-//			String[] record =str;
 			String[] stander_record=str1;
-			
-			float playTime = AllVarible.testDataContainer[testNumber][standerIndex][0];
-			float soundPressyreLevel = AllVarible.testDataContainer[testNumber][standerIndex][1];
-			float luminance = AllVarible.testDataContainer[testNumber][standerIndex][2];
-			float colorTempX =AllVarible.testDataContainer[testNumber][standerIndex][3];
-			float colorTempY =AllVarible.testDataContainer[testNumber][standerIndex][4];
-			float tempreature = AllVarible.testDataContainer[testNumber][standerIndex][5];
-			float playTimeS = Float.parseFloat(stander_record[0]);
-			float soundPressyreLevelS = Float.parseFloat(stander_record[1]);
-			float luminanceS = Float.parseFloat(stander_record[2]);
-			float colorTempXS = Float.parseFloat(stander_record[3]);
-			float colorTempYS = Float.parseFloat(stander_record[4]);
-			float tempreatureS = Float.parseFloat(stander_record[5]);
+	        if(cutBtn.getLabel().toString()=="细节")
+	        {
+	        	float playTime = AllVarible.testDataContainer[testNumber][standerIndex][0];
+	        	float soundPressyreLevel = AllVarible.testDataContainer[testNumber][standerIndex][1];
+	        	float luminance = AllVarible.testDataContainer[testNumber][standerIndex][2];
+	        	float colorTempX =AllVarible.testDataContainer[testNumber][standerIndex][3];
+	        	float colorTempY =AllVarible.testDataContainer[testNumber][standerIndex][4];
+	        	float tempreature = AllVarible.testDataContainer[testNumber][standerIndex][5];
+				float playTimeS = Float.parseFloat(stander_record[0]);
+				float soundPressyreLevelS = Float.parseFloat(stander_record[1]);
+				float luminanceS = Float.parseFloat(stander_record[2]);
+				float colorTempXS = Float.parseFloat(stander_record[3]);
+				float colorTempYS = Float.parseFloat(stander_record[4]);
+				float tempreatureS = Float.parseFloat(stander_record[5]);
 
-			spl.add(playTime, soundPressyreLevel);
-			stander_spl.add(playTime,soundPressyreLevelS);
+				spl.add(playTime, soundPressyreLevel);
+				stander_spl.add(playTime,soundPressyreLevelS);
 			
-			lum.add(playTime,luminance);
-			stander_lum.add(playTime,luminanceS);
+				lum.add(playTime,luminance);
+				stander_lum.add(playTime,luminanceS);
 			
-			colorX.add(playTime, colorTempX);
-			stander_colorX.add(playTime,colorTempXS);
+				colorX.add(playTime, colorTempX);
+				stander_colorX.add(playTime,colorTempXS);
 			
-			colorY.add(playTime, colorTempY);
-			stander_colorY.add(playTime,colorTempYS);
-			//温度曲线数据
-			temperature.add(playTime, tempreature);
-			stander_temperature.add(playTime,tempreatureS);
+				colorY.add(playTime, colorTempY);
+				stander_colorY.add(playTime,colorTempYS);
+
+				temperature.add(playTime, tempreature);
+				stander_temperature.add(playTime,tempreatureS);
 			
-			standerIndex+=1;
-//	        rightPane.removeAll();;
-			
-//			if(playTime%10==0&&playTime!=0)//测试均值显示
-//				
-//			{
-//				Double sumSql = (double) 0;
-//				Double sumLum = (double) 0;
-//				Double sumColorX = (double) 0;
-//				Double sumColorY = (double) 0;
-//				Double sumTempreature = (double) 0;
-//				Double sumSqlS = (double) 0;
-//				Double sumLumS = (double) 0;
-//				Double sumColorXS = (double) 0;
-//				Double sumColorYS = (double) 0;
-//				Double sumTempreatureS = (double) 0;
-//				for(int i=1;i<21;i++)
-//				{
-//					int sumIndex =AllVarible.curIndex-9;
-////					String[] sumRecord = AllVarible.testDataContainer[testNumber][sumIndex].split(",");
-////
-//					String[] sumRecord = AllVarible.testDataContainer[testNumber][sumIndex].split(",");
-//					String[] sumRecordS = AllVarible.standerDataContainer[testNumber][sumIndex+i].split(",");
-//
-//					sumSql = (Double) (sumSql+Double.parseDouble(sumRecord[3]));
-//					sumLum = (Double) (sumLum+Double.parseDouble(sumRecord[4]));
-//
-//					sumColorX = (Double) (sumColorX+Double.parseDouble(sumRecord[5]));
-//					sumColorY = (Double) (sumColorY+Double.parseDouble(sumRecord[6]));
-//					
-//					sumSqlS = (Double) (sumSqlS+Double.parseDouble(sumRecordS[1]));
-//					sumLumS = (Double) (sumLumS+Double.parseDouble(sumRecordS[2]));
-//					
-//					sumColorXS = (Double) (sumColorXS+Double.parseDouble(sumRecordS[3]));
-//					sumColorYS = (Double) (sumColorYS+Double.parseDouble(sumRecordS[4]));
-//					
-//					sumTempreature = (Double) (sumTempreature+Double.parseDouble(sumRecord[7]));
-//					sumTempreatureS = (Double) (sumTempreatureS+Double.parseDouble(sumRecordS[5]));
-//
-//
-//					
-////					System.out.println("~~~~~"+sumLumS);
-//					System.out.println(sumLum-sumLumS);
-//					if(i==10){
-//					if((Math.abs(sumLum/20-sumLumS/20)>lumW) && (Math.abs(sumLum/20-sumLumS)<lumD))
-//					{
-//						ynIndex[0].setText("警");
-//			        	ynIndex[0].setForeground(Color.YELLOW);
-//					}
-//					if (Math.abs(sumColorX-sumColorXS)>colorW&&Math.abs(sumColorX-sumColorXS)<colorD) {
-//						ynIndex[AllVarible.mIndex+1].setText("警");
-//			        	ynIndex[AllVarible.mIndex+1].setForeground(Color.YELLOW);
-//
-//					}
-//					if (Math.abs(sumTempreatureS-sumTempreature)>tempW&&Math.abs(sumTempreatureS-sumTempreature)<tempD) {
-//						ynIndex1[0].setText("警");
-//			        	ynIndex1[0].setForeground(Color.YELLOW);
-//					}
-//					if (Math.abs(sumSqlS-sumSql)>sqlW&&Math.abs(sumSqlS-sumSql)<sqlD) 
-//					{
-//						ynIndex1[AllVarible.mIndex+1].setText("警");
-//			        	ynIndex1[AllVarible.mIndex+1].setForeground(Color.YELLOW);
-//					}
-//					if(Math.abs(sumLum-sumLumS)>lumD)
-//					{
-//						ynIndex[0].setText("危");
-//			        	ynIndex[0].setForeground(Color.RED);
-//
-//					}
-//					if (Math.abs(sumColorX-sumColorXS)>colorD) 
-//					{
-//						ynIndex[AllVarible.mIndex+1].setText("危");
-//			        	ynIndex[AllVarible.mIndex+1].setForeground(Color.RED);
-//					}
-//					if (Math.abs(sumTempreatureS-sumTempreature)>tempD) 
-//					{
-////						System.out.println("*******"+Math.abs(sumTempreatureS-sumTempreature)+"@@@"+tempD);
-//						
-//						ynIndex1[0].setText("危");
-//			        	ynIndex1[0].setForeground(Color.RED);
-//					}
-//					if (Math.abs(sumSqlS-sumSql)>sqlD) {
-//						ynIndex1[AllVarible.mIndex+1].setText("危");
-//			        	ynIndex1[AllVarible.mIndex+1].setForeground(Color.RED);
-//					}
-//				}
-//				}
-//				AllVarible.mIndex +=1;
-//				AllVarible.curIndex +=1;
-////				if(AllVarible.mIndex>8)
-////				{
-////					AllVarible.mIndex =0;
-////				}
-//				//平均值
-//				AllVarible.AveSql = String.valueOf(String.format("%.2f",sumSql/20));
-//				AllVarible.AveLum = String.valueOf(String.format("%.2f",sumLum/20));
-//				
-//				AllVarible.AveSqlS = String.valueOf(String.format("%.2f",sumSqlS/20));
-//				AllVarible.AveLumS = String.valueOf(String.format("%.2f",sumLumS/20));
-//
-//				AllVarible.AveColorX = String.valueOf(String.format("%.2f",sumColorX/20));
-//				AllVarible.AveColorY = String.valueOf(String.format("%.2f",sumColorY/20));
-//				
-//				AllVarible.AveColorXS = String.valueOf(String.format("%.2f",sumColorXS/20));
-//				AllVarible.AveColorYS = String.valueOf(String.format("%.2f",sumColorYS/20));
-//				
-//				AllVarible.AveTempreature = String.valueOf(String.format("%.2f",sumTempreature/20));
-//				AllVarible.AveTempreatureS = String.valueOf(String.format("%.2f",sumTempreatureS/20));
-//				
-//				QmsWindows.numbers[0].setText("            "+String.valueOf(String.format("%.2f",sumLum/20))
-//				+"                       "+String.valueOf(String.format("%.2f",sumLumS/20)));
-//				
-//				
-//				QmsWindows.numbers[AllVarible.mIndex].setText("        "
-//							  +String.valueOf(String.format("%.2f",sumColorX/20)) 
-//						+"   "+String.valueOf( String.format("%.2f",sumColorY/20))+"                " 
-//							  +String.valueOf(String.format("%.2f",sumColorXS/20))
-//						+"   "+String.valueOf( String.format("%.2f",sumColorYS/20)));
-//				QmsWindows.rowIndex[0].setText("            "+String.valueOf(String.format("%.2f",sumTempreature/20))
-//				+"                       "+String.valueOf(String.format("%.2f",sumTempreatureS/20)));
-//				QmsWindows.rowIndex[AllVarible.mIndex].setText("            "+String.valueOf(String.format("%.2f",sumSql/20))
-//				+"                       "+String.valueOf(String.format("%.2f",sumSqlS/20)));
-//				}
-//			AllVarible.curIndex +=1;
+				standerIndex+=1;
+	        }else {
+//	        	System.out.println("细节已启动");
+//	        	detailData(testNumber);
+	        	if(i%20==0){
+//	        		for(int j=1;j<AllVarible.testDataContainerIndex[testNumber];j++){
+//	        			float playTime = AllVarible.testDataContainer[testNumber][j][0];
+//	        			if(playTime%10==0&&playTime!=0)//测试均值显示
+//	    					{
+	    						Double sumSql = (double) 0;
+	    						Double sumLum = (double) 0;
+	    						Double sumColorX = (double) 0;
+	    						Double sumColorY = (double) 0;
+	    						Double sumTempreature = (double) 0;
+	    						Double sumSqlS = (double) 0;
+	    						Double sumLumS = (double) 0;
+	    						Double sumColorXS = (double) 0;
+	    						Double sumColorYS = (double) 0;
+	    						Double sumTempreatureS = (double) 0;
+	    				for(int k=1;k<21;k++)
+	    				{
+	    					int sumIndex =i-20;
+	    					String[] sumRecord = AllVarible.upDataContainer[testNumber][sumIndex+k].split(",");
+	    					String[] sumRecordS = AllVarible.standerDataContainer[testNumber][sumIndex+k].split(",");
+	    					sumSql = (Double) (sumSql+Double.parseDouble(sumRecord[3]));
+	    					
+	    					sumLum = (Double) (sumLum+Double.parseDouble(sumRecord[4]));
+	    				
+	    					sumColorX = (Double) (sumColorX+Double.parseDouble(sumRecord[5]));
+	    				
+	    					sumColorY = (Double) (sumColorY+Double.parseDouble(sumRecord[6]));
+	    					
+	    					sumSqlS = (Double) (sumSqlS+Double.parseDouble(sumRecordS[1]));
+	    					
+	    					sumLumS = (Double) (sumLumS+Double.parseDouble(sumRecordS[2]));
+	    					
+	    					sumColorXS = (Double) (sumColorXS+Double.parseDouble(sumRecordS[3]));
+	    					
+	    					sumColorYS = (Double) (sumColorYS+Double.parseDouble(sumRecordS[4]));
+	    					
+	    					sumTempreature = (Double) (sumTempreature+Double.parseDouble(sumRecord[7]));
+	    					
+	    					sumTempreatureS = (Double) (sumTempreatureS+Double.parseDouble(sumRecordS[5]));
+	    					System.out.println(sumLum-sumLumS);
+	    					if(k==10){
+	    					if((Math.abs(sumLum/20-sumLumS/20)>lumW) && (Math.abs(sumLum/20-sumLumS)<lumD))
+	    					{
+	    						ynIndex[0].setText("警");
+	    			        	ynIndex[0].setForeground(Color.YELLOW);
+	    					}
+	    					if (Math.abs(sumColorX-sumColorXS)>colorW&&Math.abs(sumColorX-sumColorXS)<colorD) {
+	    						ynIndex[AllVarible.mIndex+1].setText("警");
+	    			        	ynIndex[AllVarible.mIndex+1].setForeground(Color.YELLOW);
+
+	    					}
+	    					if (Math.abs(sumTempreatureS-sumTempreature)>tempW&&Math.abs(sumTempreatureS-sumTempreature)<tempD) {
+	    						ynIndex1[0].setText("警");
+	    			        	ynIndex1[0].setForeground(Color.YELLOW);
+	    					}
+	    					if (Math.abs(sumSqlS-sumSql)>sqlW&&Math.abs(sumSqlS-sumSql)<sqlD) 
+	    					{
+	    						ynIndex1[AllVarible.mIndex+1].setText("警");
+	    			        	ynIndex1[AllVarible.mIndex+1].setForeground(Color.YELLOW);
+	    					}
+	    					if(Math.abs(sumLum-sumLumS)>lumD)
+	    					{
+	    						ynIndex[0].setText("危");
+	    			        	ynIndex[0].setForeground(Color.RED);
+
+	    					}
+	    					if (Math.abs(sumColorX-sumColorXS)>colorD) 
+	    					{
+	    						ynIndex[AllVarible.mIndex+1].setText("危");
+	    			        	ynIndex[AllVarible.mIndex+1].setForeground(Color.RED);
+	    					}
+	    					if (Math.abs(sumTempreatureS-sumTempreature)>tempD) 
+	    					{
+//	    						System.out.println("*******"+Math.abs(sumTempreatureS-sumTempreature)+"@@@"+tempD);
+	    						
+	    						ynIndex1[0].setText("危");
+	    			        	ynIndex1[0].setForeground(Color.RED);
+	    					}
+	    					if (Math.abs(sumSqlS-sumSql)>sqlD) {
+	    						ynIndex1[AllVarible.mIndex+1].setText("危");
+	    			        	ynIndex1[AllVarible.mIndex+1].setForeground(Color.RED);
+	    					}
+	    				}
+	    				}
+	    				AllVarible.mIndex +=1;
+	    				AllVarible.curIndex +=1;
+//	    			
+//	    				//平均值
+	    				AllVarible.AveSql = String.valueOf(String.format("%.2f",sumSql/20));
+	    				AllVarible.AveLum = String.valueOf(String.format("%.2f",sumLum/20));
+	    				
+	    				AllVarible.AveSqlS = String.valueOf(String.format("%.2f",sumSqlS/20));
+	    				AllVarible.AveLumS = String.valueOf(String.format("%.2f",sumLumS/20));
+
+	    				AllVarible.AveColorX = String.valueOf(String.format("%.2f",sumColorX/20));
+	    				AllVarible.AveColorY = String.valueOf(String.format("%.2f",sumColorY/20));
+	    				
+	    				AllVarible.AveColorXS = String.valueOf(String.format("%.2f",sumColorXS/20));
+	    				AllVarible.AveColorYS = String.valueOf(String.format("%.2f",sumColorYS/20));
+	    				
+	    				AllVarible.AveTempreature = String.valueOf(String.format("%.2f",sumTempreature/20));
+	    				AllVarible.AveTempreatureS = String.valueOf(String.format("%.2f",sumTempreatureS/20));
+	    				
+	    				QmsWindows.numbers[0].setText("            "+String.valueOf(String.format("%.2f",sumLum/20))
+	    				+"                       "+String.valueOf(String.format("%.2f",sumLumS/20)));
+	    				
+	    				
+	    				QmsWindows.numbers[AllVarible.mIndex].setText("        "
+	    							  +String.valueOf(String.format("%.2f",sumColorX/20)) 
+	    						+"   "+String.valueOf( String.format("%.2f",sumColorY/20))+"                " 
+	    							  +String.valueOf(String.format("%.2f",sumColorXS/20))
+	    						+"   "+String.valueOf( String.format("%.2f",sumColorYS/20)));
+	    				QmsWindows.rowIndex[0].setText("            "+String.valueOf(String.format("%.2f",sumTempreature/20))
+	    				+"                       "+String.valueOf(String.format("%.2f",sumTempreatureS/20)));
+	    				QmsWindows.rowIndex[AllVarible.mIndex].setText("            "+String.valueOf(String.format("%.2f",sumSql/20))
+	    				+"                       "+String.valueOf(String.format("%.2f",sumSqlS/20)));
+	    				}
+//	    			AllVarible.curIndex +=1;
+//	        	
+//	        		}
+	        	}
 			}
+	        }
+	}
+       
 //        rightPane.removeAll();
 //        rightPane.add(chartPanel(400, 580));
 //        rightPane.add(chartPanel(400, 580));
-        }  
-	}
+   

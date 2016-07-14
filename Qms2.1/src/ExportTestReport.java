@@ -37,35 +37,32 @@ public class ExportTestReport {
      */     
  
 
-    public static void exprotChartPicture() throws IOException {
+    public static void exprotChartPicture(int testNumber) throws IOException {
     	 
         //步骤1：创建XYDataset对象（准备数据）      
  
-        XYDataset dataset_spl = createXYDataset(3,1);      
-        XYDataset dataset_lum = createXYDataset(4,2); 
-        XYDataset dataset_temp = createXYDataset(7,5);
-        XYDataset dataset_color = createXYDataset4(5,3,6,4);
-        
-        //步骤2：根据Dataset 生成JFreeChart对象，以及做相应的设置   
-  
+        XYDataset dataset_spl = createXYDataset(testNumber,1,1);      
+        XYDataset dataset_lum = createXYDataset(testNumber,2,2); 
+        XYDataset dataset_temp = createXYDataset(testNumber,5,5);
+        XYDataset dataset_color = createXYDataset4(testNumber,3,3,4,4);
+        //步骤2：根据Dataset生成JFreeChart对象，以及做相应的设置   
         JFreeChart freeChart_spl = createChart(dataset_spl,"音频（Db）");   
         JFreeChart freeChart_lum = createChart(dataset_lum,"亮度（fL）");   
         JFreeChart freeChart_color = createChart(dataset_color,"色度（x|y）");      
         JFreeChart freeChart_temp = createChart(dataset_temp,"温度（℃）");   
-        
         //步骤3：将JFreeChart对象输出到文件，Servlet输出流等      
         int w = 500;
         int h = 160;
-        saveAsFile(freeChart_spl, "/Users/Sean/Desktop/javawork/Qms1.1/chartPicture/1"+AllVarible.standerTableName+".png", w, h);      
+        saveAsFile(freeChart_spl, "/Users/Sean/Desktop/javawork/Qms1.1/chartPicture/1"+AllVarible.standerTableName[testNumber]+".png", w, h);      
         System.out.print("Spl Updata complete");
-        saveAsFile(freeChart_lum, "/Users/Sean/Desktop/javawork/Qms1.1/chartPicture/2"+AllVarible.standerTableName+".png", w, h);      
+        saveAsFile(freeChart_lum, "/Users/Sean/Desktop/javawork/Qms1.1/chartPicture/2"+AllVarible.standerTableName[testNumber]+".png", w, h);      
         System.out.print("Lum Updata complete");
-        saveAsFile(freeChart_color, "/Users/Sean/Desktop/javawork/Qms1.1/chartPicture/3"+AllVarible.standerTableName+".png", w, h);      
+        saveAsFile(freeChart_color, "/Users/Sean/Desktop/javawork/Qms1.1/chartPicture/3"+AllVarible.standerTableName[testNumber]+".png", w, h);      
         System.out.print("Temp Updata complete");
-        saveAsFile(freeChart_temp, "/Users/Sean/Desktop/javawork/Qms1.1/chartPicture/4"+AllVarible.standerTableName+".png", w, h);      
+        saveAsFile(freeChart_temp, "/Users/Sean/Desktop/javawork/Qms1.1/chartPicture/4"+AllVarible.standerTableName[testNumber]+".png", w, h);      
         System.out.print("Temp Updata complete");
         
-        exportPDF();//图片插入PDF并导出
+        exportPDF(testNumber);//图片插入PDF并导出
         
 	}
     // 保存为文件 
@@ -150,21 +147,20 @@ public class ExportTestReport {
      *      
      */     
  
-    private static XYDataset createXYDataset(int x,int x1) {      
+    private static XYDataset createXYDataset(int testNumber, int x,int x1) {      
         XYSeries xyseries_spl = new XYSeries("spl");  
         XYSeries xyseries_standerSpl = new XYSeries("standerSpl");     
-  
 
         
-        for(int i=0;i< AllVarible.curIndex;i++)
+        for(int i=0;i<200;i++)
         {
-        	String[] str = AllVarible.testDataContainer[][i].split(",");
+        	String[] str = AllVarible.testDataContainer1[testNumber][i].split(",");
 			String[] str1 = AllVarible.standerDataContainer[testNumber][i].split(",");
-
+//			System.out.println(str1[0]);
 			String[] record =str;
 			String[] stander_record=str1;
-			xyseries_spl.add(Integer.parseInt(stander_record[0]),Double.parseDouble(record[x]));      
-			xyseries_standerSpl.add(Integer.parseInt(stander_record[0]),Double.parseDouble(stander_record[x1]));
+			xyseries_spl.add(Float.parseFloat(record[0]),Double.parseDouble(record[x]));      
+			xyseries_standerSpl.add(Float.parseFloat(record[0]),Double.parseDouble(stander_record[x1]));
         }
 
  
@@ -176,7 +172,7 @@ public class ExportTestReport {
  
         return xySeriesCollection;      
     }    
-    private static XYDataset createXYDataset4(int x,int x1,int y,int y1) {      
+    private static XYDataset createXYDataset4(int testNumber,int x,int x1,int y,int y1) {      
         
     	//建立折线对象
     	XYSeries xyseries_colorX = new XYSeries("colorX");      
@@ -185,17 +181,18 @@ public class ExportTestReport {
         XYSeries xyseries_standerColorY = new XYSeries("standerColorY");    
 
         //折线赋值
-        for(int i=0;i< AllVarible.curIndex;i++)
+        for(int i=0;i<200;i++)
         {
-			String[] str = AllVarible.upDataContainer[i].split(",");
-			String[] str1 = AllVarible.historyDataList.get(i).split(",");
+			String[] str = AllVarible.testDataContainer1[testNumber][i].split(",");
+			String[] str1 = AllVarible.standerDataContainer[testNumber][i].split(",");
 
 			String[] record =str;
 			String[] stander_record=str1;
-			xyseries_colorX.add(Integer.parseInt(stander_record[0]),Double.parseDouble(record[x]));      
-			xyseries_standerColorX.add(Integer.parseInt(stander_record[0]),Double.parseDouble(stander_record[x1]));
-			xyseries_colorY.add(Integer.parseInt(record[0]),Double.parseDouble(record[y]));      
-			xyseries_standerColorY.add(Integer.parseInt(stander_record[0]),Double.parseDouble(stander_record[y1]));
+			xyseries_colorX.add(Float.parseFloat(record[0]),Double.parseDouble(record[x])); 
+//			System.out.println(Float.parseFloat(record[0])+Double.parseDouble(record[x]));
+			xyseries_standerColorX.add(Float.parseFloat(record[0]),Double.parseDouble(stander_record[x1]));
+			xyseries_colorY.add(Float.parseFloat(record[0]),Double.parseDouble(record[y]));      
+			xyseries_standerColorY.add(Float.parseFloat(record[0]),Double.parseDouble(stander_record[y1]));
         }
    
    
@@ -213,34 +210,24 @@ public class ExportTestReport {
         return xySeriesCollection;      
     }
     
-    	public static void exportPDF() throws IOException {
+    	public static void exportPDF(int testNumber) throws IOException {
     		
     		 Document doc = new Document();
-
+    		 String tableName = AllVarible.standerTableName[testNumber].substring(0,AllVarible.standerTableName[testNumber].indexOf("s"));
     		  try {
 
     		   // 定义输出位置并把文档对象装入输出对象中
-
-    		   PdfWriter.getInstance(doc, new FileOutputStream("/Users/Sean/Desktop/tt.pdf"));
-
+    		   PdfWriter.getInstance(doc, new FileOutputStream("/Users/Sean/Desktop/"+tableName+".pdf"));
     		   // 打开文档对象
-
     		   doc.open();
-    		   
     		   // 设置中文字体
-    		   
     		   BaseFont bfChinese = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H", BaseFont.NOT_EMBEDDED);
-
     		   Font FontChinese = new Font(bfChinese, 12, Font.NORMAL);
-
     		   // 加入测试信息
-    		   
     		   String str = "QMS 质量检测报告";
     		   String str1 = "———————————————————————————————————————————";
-    		   
     		   Paragraph tt = new Paragraph(str, FontChinese);
     		   Paragraph tt1 = new Paragraph(str1, FontChinese);
-
     		   doc.add(tt);
     		   doc.add(tt1);
 
@@ -249,7 +236,7 @@ public class ExportTestReport {
     		   
     		   for (int i=1;i<5;i++)
     		   {
-    			   Image jpg = Image.getInstance("/Users/Sean/Desktop/javawork/Qms1.1/chartPicture/"+i+"t2016613170407.png");
+    			   Image jpg = Image.getInstance("/Users/Sean/Desktop/javawork/Qms1.1/chartPicture/"+i+AllVarible.standerTableName[testNumber]+".png");
     			   jpg.setAlignment(Image.ALIGN_CENTER);
     			   doc.add(jpg);
     		   }
