@@ -924,13 +924,7 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 			
 				standerIndex+=1;
 	        }else {
-//	        	System.out.println("细节已启动");
-//	        	detailData(testNumber);
 	        	if(i%20==0){
-//	        		for(int j=1;j<AllVarible.testDataContainerIndex[testNumber];j++){
-//	        			float playTime = AllVarible.testDataContainer[testNumber][j][0];
-//	        			if(playTime%10==0&&playTime!=0)//测试均值显示
-//	    					{
 	    						Double sumSql = (double) 0;
 	    						Double sumLum = (double) 0;
 	    						Double sumColorX = (double) 0;
@@ -1000,7 +994,6 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 	    					if (Math.abs(sumTempreatureS-sumTempreature)>tempD) 
 	    					{
 //	    						System.out.println("*******"+Math.abs(sumTempreatureS-sumTempreature)+"@@@"+tempD);
-	    						
 	    						ynIndex1[0].setText("危");
 	    			        	ynIndex1[0].setForeground(Color.RED);
 	    					}
@@ -1049,9 +1042,9 @@ public class QmsWindows extends JFrame implements Runnable, ActionListener {
 	        	}
 			}
 	        }
+	public static void drawCur(int testNumber)throws InterruptedException
+	{
+		
 	}
-       
-//        rightPane.removeAll();
-//        rightPane.add(chartPanel(400, 580));
-//        rightPane.add(chartPanel(400, 580));
-   
+}    
+

@@ -12,11 +12,8 @@ class AllVarible
 	static List<String> upDataList = new ArrayList<String>();//上传数据列表
 	static  String[][] standerDataContainer = new String[200][400];//基准数据容器列表
 	static  String[][] testDataContainer1 = new String[200][400];//基准数据容器列表
-
 	static  Float[][][] testDataContainer = new Float[200][400][6];//基准数据容器列表
-
 	static  String[][] upDataContainer = new String[200][400];
-//	static  String testDataContainer[] = new String[200];
 
 	
 	static List<String> tableList = new ArrayList<String>();//历史测试列表
@@ -55,13 +52,6 @@ public class Main
 	QmsUi.pack();
 	RefineryUtilities.centerFrameOnScreen(QmsUi);
 	QmsUi.setVisible(true);
-	
-//	GetTestDataThread aTestThread = new GetTestDataThread(0,"192.168.50.160",10001);
-//	aTestThread.start();
-//	GetTestDataThread aTestThread1 = new GetTestDataThread(1,"192.168.50.161",10001);
-//	aTestThread1.start();
-//////	
-//	GetTestDataThread.creatTable();
 	
 	}
 }

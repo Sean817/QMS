@@ -74,7 +74,7 @@ public class GetTestDataThread extends Thread{
 			
 			try {
 				getAllData(index,equipmentIp,port);
-				Thread.sleep(500);
+				Thread.sleep(300);
 				if(playTime[index]==100.5)
 					{
 						break; 
@@ -84,13 +84,18 @@ public class GetTestDataThread extends Thread{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				}
-			try {
-				QmsWindows.draw(AllVarible.drawNumber);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			}
+			
+			
+//			try {
+//				QmsWindows.draw(AllVarible.drawNumber);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+			
+		
+		}
+		
 		try {
 		    Date now = new Date();
 		    DateFormat d2 = DateFormat.getDateTimeInstance(); 
@@ -116,6 +121,9 @@ public class GetTestDataThread extends Thread{
 			String server_colorTempreatureX = record[5];
 			String server_colorTempreatureY = record[6];
 			String server_tempreature = record[7];
+			String insert_theater = record[8];
+			String insert_theaterNo = record[9];
+
 			stmt = null;
 		    try {
 				stmt = connectMysql().createStatement();
@@ -126,7 +134,7 @@ public class GetTestDataThread extends Thread{
 			try {
 				stmt.addBatch("insert into "
 				        +tableName
-						+ "(PlayTime,HostName,Ip,Spl,Luminance,ChromaX,ChromaY,Temperature) "
+						+ "(PlayTime,HostName,Ip,Spl,Luminance,ChromaX,ChromaY,Temperature,Theater,TheaterNo) "
 						+"values ("+"'"+insert_playTime+"',"
 								+"'"+insert_HostName+"',"
 								+"'"+insert_getIp+"',"
@@ -134,7 +142,9 @@ public class GetTestDataThread extends Thread{
 								+"'"+server_luminance+"',"
 								+"'"+server_colorTempreatureX+"',"
 								+"'"+server_colorTempreatureY+"',"
-								+"'"+server_tempreature+"'"
+								+"'"+server_tempreature+"',"
+								+"'"+insert_theater+"',"
+								+"'"+insert_theaterNo+"'"
 								+")");
 				stmt.executeBatch();
 				stmt.close();
@@ -203,6 +213,15 @@ public class GetTestDataThread extends Thread{
 	        String server_colorTempreatureY = new String(buf,0,len);
 //			System.out.print(server_colorTempreatureY);//打印
 
+		    String theater = "GetTheater"+"\r";
+			out.write(theater.getBytes());
+			len = in.read(buf);//读取数据放进缓冲
+	        String server_theater = new String(buf,0,len);
+	        
+		    String theaterNo = "GetTheaterNo"+"\r";
+			out.write(theaterNo.getBytes());
+			len = in.read(buf);//读取数据放进缓冲
+	        String server_theaterNo = new String(buf,0,len);
 //	              
 		    String tempreature = "Lss100.sys.temperature"+"\r";
 			out.write(tempreature.getBytes());
@@ -223,7 +242,9 @@ public class GetTestDataThread extends Thread{
 	              			+server_luminance+","
 	              			+server_colorTempreatureX+","
 	              			+server_colorTempreatureY+","
-	              			+server_tempreature;
+	              			+server_tempreature+","
+	              			+server_theater+","
+	              			+server_theaterNo;
 		  	playTime[index]+=0.5;
 //		  	
 		  	AllVarible.upDataContainer[index][AllVarible.testDataContainerIndex[index]] = data;
@@ -343,7 +364,10 @@ public class GetTestDataThread extends Thread{
 				+ "Luminance varchar(20) not null, "
 				+ "ChromaX varchar(20) not null, "
 				+ "ChromaY varchar(20) not null, "
-				+ "Temperature varchar(20) not null,primary key (PlayTime));";
+				+ "Temperature varchar(20) not null,"
+				+ "Theater varchar(20) not null, "
+				+ "TheaterNo varchar(20) not null, "
+				+ "primary key (PlayTime));";
 		PreparedStatement pstmt = connectMysql().prepareStatement(sql);
 	    pstmt.executeUpdate();
 //	    System.out.println(AllVarible.tableName);
